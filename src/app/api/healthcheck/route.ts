@@ -1,23 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import connectToDB from "@/db/connectToDB";
+import ApiResponse from "@/helpers/ApiResponse";
 
 connectToDB();
 
 export async function GET(request: NextRequest) {
   try {
-    return NextResponse.json({
-      success: true,
-      status: 200,
-      message: "Route is working correctly...",
-      data: {},
-    });
+    return NextResponse.json(new ApiResponse(true, 200, {}, "Route is working correctly..."));
   } catch (error: any) {
     console.log(`Something went wrong : ERROR : ${error.message}`);
-    return NextResponse.json({
-      success: false,
-      status: 500,
-      message: "Internal Server Error...",
-      data: {},
-    });
+    return NextResponse.json(new ApiResponse(false, 500, {}, "Internal Server Error..."));
   }
 }
