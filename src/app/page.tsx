@@ -21,7 +21,7 @@ export default function LandingPage() {
             Transform Your Study Sessions with QuantumRevision!
           </p>
           <Link
-            href={"/signup"}
+            href={"/login"}
             className="w-fit flex flex-row justify-center items-center border px-4 py-3 rounded-lg gap-x-3"
           >
             <MdEditNotifications className="h-6 w-6" />

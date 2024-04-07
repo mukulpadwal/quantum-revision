@@ -3,6 +3,7 @@ import { Inter as FontSans } from "next/font/google";
 import "@/styles/globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Navbar, Footer } from "@/components";
+import { Toaster } from "react-hot-toast";
 
 import { cn } from "@/lib/utils";
 
@@ -35,6 +36,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <Toaster />
           <Navbar />
           {children}
           <Footer />
