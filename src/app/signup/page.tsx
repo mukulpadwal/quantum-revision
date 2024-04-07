@@ -18,18 +18,18 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 
-interface FormData {
-  firstName: string;
-  lastName: string;
+interface SignupFormData {
+  username: string;
+  fullName: string;
   email: string;
   password: string;
 }
 
 export default function SignupPage() {
   const router = useRouter();
-  const [formData, setFormData] = useState<FormData>({
-    firstName: "",
-    lastName: "",
+  const [formData, setFormData] = useState<SignupFormData>({
+    username: "",
+    fullName: "",
     email: "",
     password: "",
   });
@@ -40,8 +40,8 @@ export default function SignupPage() {
       setIsDisabled(true);
       // Validate data in all the fields
       if (
-        formData.firstName.trim().length > 0 &&
-        formData.lastName.trim().length > 0 &&
+        formData.username.trim().length > 0 &&
+        formData.fullName.trim().length > 0 &&
         formData.email.trim().length > 0 &&
         formData.password.trim().length > 0
       ) {
@@ -50,8 +50,8 @@ export default function SignupPage() {
         if (response.data.success) {
           toast.success(response.data.message);
           setFormData({
-            firstName: "",
-            lastName: "",
+            username: "",
+            fullName: "",
             email: "",
             password: "",
           });
@@ -87,27 +87,27 @@ export default function SignupPage() {
         <div className="grid gap-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="grid gap-2">
-              <Label htmlFor="firstName">First name</Label>
+              <Label htmlFor="firstName">Username</Label>
               <Input
-                id="firstName"
-                name="firstName"
-                placeholder="firstname"
-                value={formData.firstName}
+                id="userName"
+                name="username"
+                placeholder="username"
+                value={formData.username}
                 onChange={(e) =>
-                  setFormData({ ...formData, firstName: e.target.value })
+                  setFormData({ ...formData, username: e.target.value })
                 }
                 required
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="lastName">Last name</Label>
+              <Label htmlFor="lastName">Full Name</Label>
               <Input
-                id="lastName"
-                name="lastName"
-                placeholder="lastname"
-                value={formData.lastName}
+                id="fullName"
+                name="fullName"
+                placeholder="Full Name"
+                value={formData.fullName}
                 onChange={(e) =>
-                  setFormData({ ...formData, lastName: e.target.value })
+                  setFormData({ ...formData, fullName: e.target.value })
                 }
                 required
               />

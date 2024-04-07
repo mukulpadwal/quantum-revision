@@ -5,16 +5,18 @@ import validateEmail from "@/helpers/validateEmail";
 import validatePassword from "@/helpers/validatePassword";
 import User from "@/models/user.model";
 import bcrypt from "bcryptjs";
+import sendMail from "@/helpers/sendMail";
 
 connectToDB();
 
 export async function POST(request: NextRequest) {
     try {
         const formData = await request.json();
-        const { firstName, lastName, email, password } = formData;
+        const { username, fullName, email, password } = formData;
+
 
         // STEP 1 : validate the data at the backend also
-        if ([firstName, lastName, email, password].some((field) => !field || field?.trim().length === 0)) {
+        if ([username, fullName, email, password].some((field) => !field || field?.trim().length === 0)) {
             return NextResponse.json(new ApiResponse(false, 400, {}, "Some data is missing."));
         }
 
@@ -25,7 +27,17 @@ export async function POST(request: NextRequest) {
             return NextResponse.json(new ApiResponse(false, 400, {}, "Invalid email address."));
         }
 
-        // Step 1.2 Check for password length and strength
+
+        // Step 1.2 Check for unique user
+        const userExists = await User.findOne({
+            $or: [{ email }, { username }]
+        });
+
+        if (userExists !== null) {
+            return NextResponse.json(new ApiResponse(false, 400, {}, "User with same email or username already exists."));
+        }
+
+        // Step 1.3 Check for password length and strength
         const isValidPassword = validatePassword(password);
 
         if (!isValidPassword) {
@@ -36,12 +48,11 @@ export async function POST(request: NextRequest) {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
-        // Step 2 : Let us create the user now and send verification email
+        // Step 2.1 : Let us create the user now and send verification email
         const userData = {
-            username: firstName.trim().toLowerCase() + lastName.trim().toLowerCase(),
+            username: username,
+            fullName: fullName,
             email: email,
-            firstName: firstName,
-            lastName: lastName,
             password: hashedPassword
         }
 
@@ -52,10 +63,10 @@ export async function POST(request: NextRequest) {
         }
 
         // Step 3 : If user is created we need to send him account verification email
-        //TODO
+        await sendMail({ email: user.email, emailType: 'VERIFY', userId: user._id, fullName: user.fullName });
 
         // Step 4 : User successfully registered
-        return NextResponse.json(new ApiResponse(true, 201, user, "Account successfully created..."));
+        return NextResponse.json(new ApiResponse(true, 201, user, "Account successfully created. Kindly check your email and verify your account."));
 
     } catch (error: any) {
         console.log(error.message);
