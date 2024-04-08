@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ThemeSwitcher from "./ThemeSwitcher";
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { IoCloseSharp } from "react-icons/io5";
 import Image from "next/image";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 const mobileMenuItems = [
   {
@@ -46,7 +48,41 @@ const menuItems = [
 ];
 
 export default function Navbar() {
-  const [isMobileMenuClicked, setIsMobileMenuClicked] = useState(false);
+  const [isMobileMenuClicked, setIsMobileMenuClicked] =
+    useState<boolean>(false);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+
+  useEffect(() => {
+    try {
+      (async () => {
+        const response = await axios.get("/api/users/is-logged-in");
+        if (response.data.success) {
+          setIsLoggedIn(true);
+        } else {
+          setIsLoggedIn(false);
+        }
+      })();
+    } catch (error: any) {
+      console.log(`Internal Server Error : ${error.message}`);
+    }
+  }, []);
+
+  const handleUserLogout = async () => {
+    try {
+      const response = await axios.get("/api/users/logout");
+      if (response.data.success) {
+        toast.success(response.data.message);
+        setIsLoggedIn(false);
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error: any) {
+      console.log(
+        `Error while logging out the user : ERROR : ${error.message}`
+      );
+    }
+  };
+
   return (
     <header>
       <nav className="md:border md:border-x-0 md:border-t-0 relative top-0 w-full h-full p-4 flex justify-between items-center">
@@ -69,22 +105,35 @@ export default function Navbar() {
           ))}
         </div>
         <div className="order-3 flex flex-row justify-center items-center gap-x-4">
-          <Link
-            href={"/login"}
-            className={`hidden md:inline-block ${buttonVariants({
-              variant: "link",
-            })}`}
-          >
-            Login
-          </Link>
-          <Link
-            href={"/signup"}
-            className={`hidden md:inline-block ${buttonVariants({
-              variant: "default",
-            })}`}
-          >
-            SignUp
-          </Link>
+          {!isLoggedIn ? (
+            <>
+              <Link
+                href={"/login"}
+                className={`hidden md:inline-block ${buttonVariants({
+                  variant: "link",
+                })}`}
+              >
+                Login
+              </Link>
+              <Link
+                href={"/signup"}
+                className={`hidden md:inline-block ${buttonVariants({
+                  variant: "default",
+                })}`}
+              >
+                SignUp
+              </Link>
+            </>
+          ) : (
+            <Button
+              onClick={handleUserLogout}
+              className={`hidden md:inline-block ${buttonVariants({
+                variant: "default",
+              })}`}
+            >
+              Logout
+            </Button>
+          )}
 
           <ThemeSwitcher />
         </div>
