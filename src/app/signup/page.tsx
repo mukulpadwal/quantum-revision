@@ -17,6 +17,7 @@ import { MdAccountCircle } from "react-icons/md";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import { Loader2 } from "lucide-react";
 
 interface SignupFormData {
   username: string;
@@ -34,10 +35,12 @@ export default function SignupPage() {
     password: "",
   });
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
+  const [creating, setCreating] = useState<boolean>(false);
 
   const handleUserSignUp = async () => {
     try {
       setIsDisabled(true);
+      setCreating(true);
       // Validate data in all the fields
       if (
         formData.username.trim().length > 0 &&
@@ -66,8 +69,11 @@ export default function SignupPage() {
       }
 
       setIsDisabled(false);
+      setCreating(false);
     } catch (error: any) {
       setIsDisabled(false);
+      setCreating(false);
+
       console.log(error.message);
       toast.error(
         "Something went wrong while creating your account. Please try again."
@@ -140,15 +146,21 @@ export default function SignupPage() {
               required
             />
           </div>
-          <Button
-            type="submit"
-            className="w-full flex flex-row items-center justify-center gap-x-2"
-            onClick={handleUserSignUp}
-            disabled={isDisabled}
-          >
-            <MdAccountCircle className="h-6 w-6" />
-            Create an account
-          </Button>
+          {!creating ? (
+            <Button
+              type="submit"
+              className="w-full flex flex-row items-center justify-center gap-x-2"
+              onClick={handleUserSignUp}
+            >
+              <MdAccountCircle className="h-6 w-6" />
+              Create an account
+            </Button>
+          ) : (
+            <Button disabled>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Please wait
+            </Button>
+          )}
           <hr className="my-1" />
           <Button
             variant="outline"
