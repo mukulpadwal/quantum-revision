@@ -50,7 +50,7 @@ export default function LoginPage() {
           });
           setTimeout(() => {
             router.push("/");
-          }, 1000);
+          }, 1500);
         } else {
           toast.error(response.data.message);
         }
@@ -96,7 +96,7 @@ export default function LoginPage() {
             <div className="flex items-center">
               <Label htmlFor="password">Password</Label>
               <Link
-                href="/forgotpassword"
+                href="/resetpassword"
                 className="ml-auto inline-block text-sm underline"
               >
                 Forgot your password?

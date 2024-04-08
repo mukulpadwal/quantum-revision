@@ -46,6 +46,9 @@ export async function POST(request: NextRequest) {
 
         }
 
+        user.isLoggedIn = true;
+        await user.save();
+
         // Step 4 : Create a cookie to send to user
         const cookieToken = jwt.sign({
             _id: user._id
