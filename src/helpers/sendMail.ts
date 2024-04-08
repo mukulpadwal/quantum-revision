@@ -16,36 +16,161 @@ export default async function sendMail({ email, emailType, userId, fullName }: M
         const token = jwt.sign({ _id: userId }, conf.tokenSecret);
 
         const verifyAccountHtmlBody = `
-        <h3>Hello ${fullName},</h3>
-        <p>Get ready to Transform Your Study Sessions with QuantumRevision!</p>
+        <body>
+            <header
+            style="
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                align-items: center;
+                margin: 16px;
+            "
+            >
+            <img
+                src=${"/public/images/three.jpeg"}
+                alt="Quantum Revision Logo"
+                style="
+                display: inline-block;
+                width: auto;
+                height: 100px;
+                text-align: center;
+                border: 1px solid black;
+                border-radius: 50%;
+                padding: 10px;
+                "
+            />
+            </header>
+            <div style="width: auto; height: auto; padding: 16px">
+            <p style="font-size: 24px; text-align: center">Hi, ${fullName}</p>
+            <p style="font-size: 18px">
+                Get ready to Transform Your Study Sessions with QuantumRevision!
+            </p>
+            <p style="font-size: 18px">
+                Click the below button to Verify Your Account and start revising better.
 
-        <p>Click the below button to Verify Your Account and start revising better.
-            <a href='${conf.domain}/verifyaccount?token=${token}' style="color: #555; background: #ffc; padding-right: 8px; padding-left: 8px; padding-top: 2px; padding-bottom: 2px;">
-            VERIFY
-            </a>
-        </p>
-        <hr>
-        <div>
-            If above button does not work. Copy and paste this link directly in your browser <code>${conf.domain}/verifyaccount?token=${token}</code>
-        </div>
-        <hr>
+                <a
+                href="${conf.domain}/verifyaccount?token=${token}"
+                style="
+                    border: 1px solid black;
+                    border-radius: 16px;
+                    padding-right: 8px;
+                    padding-left: 8px;
+                    padding-top: 2px;
+                    padding-bottom: 2px;
+                    text-decoration: none;
+                "
+                >
+                VERIFY ACCOUNT
+                </a>
+            </p>
+            <hr style="margin-top: 16px; margin-bottom: 16px" />
+            <p style="font-size: 18px">
+                If above button does not work. Copy and paste this link directly in your
+                browser
+            </p>
+            
+                <code style="
+                display: inline-block;
+                width: auto;
+                height: fit-content;
+                border: 1px solid black;
+                padding: 10px;
+                word-break: break-all;
+                font-size: 16px;
+              ">${conf.domain}/verifyaccount?token=${token}</code>
+          
+            </div>
+            <footer
+            style="
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                align-items: center;
+                margin: 16px;
+            "
+            >
+            <div>&copy; 2024 Quantum revision. All Rights Reserved.</div>
+            </footer>
+        </body>
         `;
 
         const resetPasswordHtmlBody = `
-        <h3>Hello ${fullName},</h3>
-        <br>
-        <p>Get ready to Transform Your Study Sessions with QuantumRevision!</p>
-        <br>
-        <p>Click the below button to Reset Your Password and start revising better.
-            <a href='${conf.domain}/resetpassword?token=${token}' style="color: #555; background: #ffc; padding-right: 8px; padding-left: 8px; padding-top: 2px; padding-bottom: 2px;">
-            VERIFY
-            </a>
-        </p>
-        <hr>
-        <br>
-        <div>
-            If above button does not work. Copy and paste this link directly in your browser <code>${conf.domain}/resetpassword?token=${token}</code>
-        </div>
+        <body>
+            <header
+            style="
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                align-items: center;
+                margin: 16px;
+            "
+            >
+            <img
+                src=${"/public/images/three.jpeg"}
+                alt="Quantum Revision Logo"
+                style="
+                display: inline-block;
+                width: auto;
+                height: 100px;
+                text-align: center;
+                border: 1px solid black;
+                border-radius: 50%;
+                padding: 10px;
+                "
+            />
+            </header>
+            <div style="width: auto; height: auto; padding: 16px">
+            <p style="font-size: 24px; text-align: center">Hi, ${fullName}</p>
+            <p style="font-size: 18px">
+                Get ready to Transform Your Study Sessions with QuantumRevision!
+            </p>
+            <p style="font-size: 18px">
+                Click the below button to Reset password for your account and start revising better.
+
+                <a
+                href="${conf.domain}/changepassword?token=${token}"
+                style="
+                    border: 1px solid black;
+                    border-radius: 16px;
+                    padding-right: 8px;
+                    padding-left: 8px;
+                    padding-top: 2px;
+                    padding-bottom: 2px;
+                    text-decoration: none;
+                "
+                >
+                RESET PASSWORD
+                </a>
+            </p>
+            <hr style="margin-top: 16px; margin-bottom: 16px" />
+            <p style="font-size: 18px">
+                If above button does not work. Copy and paste this link directly in your
+                browser
+            </p>
+            
+                <code style="
+                display: inline-block;
+                width: auto;
+                height: fit-content;
+                border: 1px solid black;
+                padding: 10px;
+                word-break: break-all;
+                font-size: 16px;
+              ">${conf.domain}/changepassword?token=${token}</code>
+          
+            </div>
+            <footer
+            style="
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                align-items: center;
+                margin: 16px;
+            "
+            >
+            <div>&copy; 2024 Quantum revision. All Rights Reserved.</div>
+            </footer>
+        </body>
         `;
 
         if (emailType === 'VERIFY') {
