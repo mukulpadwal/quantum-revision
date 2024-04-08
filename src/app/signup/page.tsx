@@ -57,7 +57,7 @@ export default function SignupPage() {
           });
           setTimeout(() => {
             router.push("/login");
-          }, 1000);
+          }, 1500);
         } else {
           toast.error(response.data.message);
         }

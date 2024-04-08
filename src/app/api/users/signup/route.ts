@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
         const isValidPassword = validatePassword(password);
 
         if (!isValidPassword) {
-            return NextResponse.json(new ApiResponse(false, 400, {}, "Password must be 8 characters and long. And must contain atleast one number and one special character."));
+            return NextResponse.json(new ApiResponse(false, 400, {}, "Oops! It seems your password doesn't meet the minimum requirements. Please ensure your password contains at least one capital letter, one number, one special character, and is longer than 8 characters for enhanced security."));
         }
 
         // Step 2 : We need to encrypt the password before saving it to the database
