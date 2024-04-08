@@ -15,6 +15,7 @@ import { useEffect, useState } from "react";
 import { MdOutlineLockReset } from "react-icons/md";
 import toast from "react-hot-toast";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 
 interface ResetPasswordFormData {
   oldPassword: string;
@@ -23,6 +24,7 @@ interface ResetPasswordFormData {
 }
 
 export default function ChangePasswordPage() {
+  const router = useRouter();
   const query = useSearchParams();
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
   const [token, setToken] = useState<string>("");
@@ -55,6 +57,9 @@ export default function ChangePasswordPage() {
 
           if (response.data.success) {
             toast.success(response.data.message);
+            setTimeout(() => {
+              router.push("/login");
+            }, 1500);
           } else {
             toast.error(response.data.message);
           }
@@ -88,7 +93,7 @@ export default function ChangePasswordPage() {
             <Label htmlFor="old-password">Old Password</Label>
             <Input
               id="old-password"
-              type="old-password"
+              type="password"
               name="old-password"
               placeholder="********"
               value={formData.oldPassword}
@@ -103,7 +108,7 @@ export default function ChangePasswordPage() {
 
             <Input
               id="new-password"
-              type="new-password"
+              type="password"
               name="new-password"
               placeholder="********"
               value={formData.newPassword}
@@ -118,7 +123,7 @@ export default function ChangePasswordPage() {
 
             <Input
               id="confirm-new-password"
-              type="confirm-new-password"
+              type="password"
               name="confirm-new-password"
               placeholder="********"
               value={formData.confirmNewPassword}
