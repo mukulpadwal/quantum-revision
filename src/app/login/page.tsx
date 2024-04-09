@@ -49,7 +49,7 @@ export default function LoginPage() {
             password: "",
           });
           setTimeout(() => {
-            router.push("/");
+            router.push("/homepage");
           }, 1500);
         } else {
           toast.error(response.data.message);
