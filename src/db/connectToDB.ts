@@ -3,6 +3,13 @@ import { DB_NAME } from "@/constants";
 import mongoose from "mongoose";
 
 export default async function connectToDB() {
+  if (mongoose.connection.readyState) {
+    console.log(
+      `Already connected to DataBase on host : ${mongoose.connection.host}`
+    );
+    return;
+  }
+
   try {
     await mongoose
       .connect(`${conf.mongoDbUri}/${DB_NAME}`)
