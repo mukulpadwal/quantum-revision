@@ -45,7 +45,6 @@ import {
 import { SlCalender } from "react-icons/sl";
 import { MdNoteAdd } from "react-icons/md";
 import toast from "react-hot-toast";
-import { title } from "process";
 
 const notes = [
   {
@@ -78,7 +77,7 @@ export default function HomePage() {
   });
   const [noteData, setNoteData] = useState<Note>({
     title: "",
-    date: new Date(),
+    date: undefined,
   });
   const [revisionData, setRevisionData] = useState<Array<RevisionData>>([
     {
@@ -102,10 +101,24 @@ export default function HomePage() {
     })();
   }, []);
 
+  useEffect(() => {
+    (async () => {
+      try {
+        const response = await axios.get("/api/notes/all");
+
+        if (response.data.success) {
+          setRevisionData({ ...response.data.data });
+        } else {
+        }
+      } catch (error: any) {}
+    })();
+  }, []);
+
   const handleSaveRevision = async () => {
     try {
+      console.log(noteData);
       if (noteData.title.trim().length > 0 && noteData.date !== undefined) {
-        const response = await axios.post("", noteData);
+        const response = await axios.post("/api/notes/create", noteData);
 
         if (response.data.success) {
           toast.success(response.data.message);
@@ -213,18 +226,24 @@ export default function HomePage() {
           <TableHeader>
             <TableRow>
               <TableHead>Title</TableHead>
+              <TableHead>Created At</TableHead>
               <TableHead>1st Revision Date</TableHead>
               <TableHead>2nd Revision Date</TableHead>
               <TableHead>3rd Revision Date</TableHead>
+              <TableHead>Change Date</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {revisionData.map((data, index) => (
               <TableRow key={`${index}-${data.title}`}>
                 <TableCell>{data.title}</TableCell>
+                <TableCell>{data.title}</TableCell>
                 <TableCell>{data.firstDate}</TableCell>
                 <TableCell>{data.secondDate}</TableCell>
                 <TableCell>{data.thirdDate}</TableCell>
+                <TableCell>
+                  <Button>Change</Button>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
