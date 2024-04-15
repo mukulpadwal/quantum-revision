@@ -2,13 +2,19 @@ import mongoose from "mongoose";
 
 const noteSchema = new mongoose.Schema({
     title: {
-
+        type: String,
+        required: true,
+        index: true,
+        trim: true
     },
-    revision: {
-
+    entryDate: {
+        type: Date,
+        required: true,
+        default: Date.now()
     },
     owner: {
-
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "users"
     }
 }, { timestamps: true });
 
