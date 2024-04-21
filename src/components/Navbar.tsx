@@ -8,7 +8,8 @@ import { Button } from "@/components/ui/button";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { IoCloseSharp } from "react-icons/io5";
 import Image from "next/image";
-import axios from "axios";
+import { signOut } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import toast from "react-hot-toast";
 
 const mobileMenuItems = [
@@ -48,40 +49,29 @@ const menuItems = [
 ];
 
 export default function Navbar() {
+  const { data: session } = useSession();
+
   const [isMobileMenuClicked, setIsMobileMenuClicked] =
     useState<boolean>(false);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
 
-  useEffect(() => {
-    try {
-      (async () => {
-        const response = await axios.get("/api/users/is-logged-in");
-        if (response.data.success) {
-          setIsLoggedIn(true);
-        } else {
-          setIsLoggedIn(false);
-        }
-      })();
-    } catch (error: any) {
-      console.log(`Internal Server Error : ${error.message}`);
-    }
-  }, []);
-
   const handleUserLogout = async () => {
     try {
-      const response = await axios.get("/api/users/logout");
-      if (response.data.success) {
-        toast.success(response.data.message);
-        setIsLoggedIn(false);
-      } else {
-        toast.error(response.data.message);
-      }
+      await signOut({ callbackUrl: "/" });
+      setIsLoggedIn(false);
+      toast.success("Successfully logged out...");
     } catch (error: any) {
       console.log(
         `Error while logging out the user : ERROR : ${error.message}`
       );
     }
   };
+
+  useEffect(() => {
+    if (session) {
+      setIsLoggedIn(true);
+    }
+  }, [session]);
 
   return (
     <header>

@@ -12,12 +12,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { MdLogin } from "react-icons/md";
-
 import { FaGoogle } from "react-icons/fa";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import axios from "axios";
+import { signIn } from "next-auth/react";
 
 interface LoginFormData {
   email: string;
@@ -40,19 +39,25 @@ export default function LoginPage() {
         formData.email.trim().length > 0 &&
         formData.password.trim().length > 0
       ) {
-        const response = await axios.post("/api/users/login", formData);
+        const response = await signIn("credentials", {
+          ...formData,
+          redirect: false,
+        });
+        console.log(response);
 
-        if (response.data.success) {
-          toast.success(response.data.message);
-          setFormData({
-            email: "",
-            password: "",
-          });
-          setTimeout(() => {
-            router.push("/homepage");
-          }, 1500);
+        if (response?.ok) {
+          if (response.error === null) {
+            toast.success("Signed In successfully.");
+            setTimeout(() => {
+              router.push("/homepage");
+            }, 1500);
+          } else {
+            toast.error(
+              "Could not log in. Kindly make sure your account is activated."
+            );
+          }
         } else {
-          toast.error(response.data.message);
+          toast.error("Could not log in. Please try again.");
         }
       } else {
         toast.error("Please provide data in all the fields...");

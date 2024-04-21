@@ -6,7 +6,8 @@ const conf = {
     mailtrapPort: Number(process.env.MAILTRAP_PORT),
     mailtrapUser: String(process.env.MAILTRAP_USER),
     mailtrapPassword: String(process.env.MAILTRAP_PASSWORD),
-    domain: String(process.env.DOMAIN)
+    domain: String(process.env.DOMAIN),
+    authJsToken: String(process.env.AUTH_SECRET),
 }
 
 export default conf;
