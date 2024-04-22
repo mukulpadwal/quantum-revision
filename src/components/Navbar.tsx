@@ -12,42 +12,6 @@ import { signOut } from "next-auth/react";
 import { useSession } from "next-auth/react";
 import toast from "react-hot-toast";
 
-const mobileMenuItems = [
-  {
-    key: 1,
-    title: "About",
-    href: "/about",
-  },
-  {
-    key: 2,
-    title: "Contact",
-    href: "/contact",
-  },
-  {
-    key: 3,
-    title: "Login",
-    href: "/login",
-  },
-  {
-    key: 4,
-    title: "Sign Up",
-    href: "/signup",
-  },
-];
-
-const menuItems = [
-  {
-    key: 1,
-    title: "About",
-    href: "/about",
-  },
-  {
-    key: 2,
-    title: "Contact",
-    href: "/contact",
-  },
-];
-
 export default function Navbar() {
   const { data: session } = useSession();
 
@@ -61,7 +25,7 @@ export default function Navbar() {
       setIsLoggedIn(false);
       toast.success("Successfully logged out...");
     } catch (error: any) {
-      console.log(
+      console.error(
         `Error while logging out the user : ERROR : ${error.message}`
       );
     }
@@ -76,7 +40,16 @@ export default function Navbar() {
   return (
     <header>
       <nav className="md:border md:border-x-0 md:border-t-0 relative top-0 w-full h-full p-4 flex justify-between items-center">
-        <div className="flex order-2 md:order-1">
+        <div className="hidden md:flex md:justify-center md:items-center md:gap-x-6  md:order-1">
+          <Link href={"/"} className={`underline underline-offset-4`}>
+            Home
+          </Link>
+          <Link href={"/about"}>About</Link>
+          <Link href={"/how-to-use"}>How to Use</Link>
+          <Link href={"/contact"}>Contact</Link>
+        </div>
+
+        <div className="flex order-2">
           <Link href={"/"}>
             <Image
               src={"/images/three.jpeg"}
@@ -87,13 +60,7 @@ export default function Navbar() {
             />
           </Link>
         </div>
-        <div className="hidden md:flex md:justify-center md:items-center md:gap-x-4  md:order-2">
-          {menuItems?.map((item) => (
-            <Link href={item.href} key={item.key}>
-              {item.title}
-            </Link>
-          ))}
-        </div>
+
         <div className="order-3 flex flex-row justify-center items-center gap-x-4">
           {!isLoggedIn ? (
             <>
@@ -117,9 +84,7 @@ export default function Navbar() {
           ) : (
             <Button
               onClick={handleUserLogout}
-              className={`hidden md:inline-block ${buttonVariants({
-                variant: "default",
-              })}`}
+              className={`hidden md:inline-block`}
             >
               Logout
             </Button>
@@ -127,6 +92,7 @@ export default function Navbar() {
 
           <ThemeSwitcher />
         </div>
+
         <div className="h-full inline-block order-1 md:hidden">
           <div>
             {!isMobileMenuClicked ? (
@@ -149,22 +115,59 @@ export default function Navbar() {
           </div>
           {isMobileMenuClicked && (
             <div className="absolute my-2 rounded-md  w-11/12 h-fit bg-white border shadow-lg dark:bg-black z-10">
-              {mobileMenuItems?.map((item) => {
-                if (session && (item.key === 3 || item.key === 4)) {
-                  return;
-                }
-
-                return (
+              <Link
+                href={"/"}
+                className="block w-auto relative m-4"
+                onClick={() => setIsMobileMenuClicked((prev) => !prev)}
+              >
+                Home
+              </Link>
+              <Link
+                href={"/about"}
+                className="block w-auto relative m-4"
+                onClick={() => setIsMobileMenuClicked((prev) => !prev)}
+              >
+                About
+              </Link>
+              <Link
+                href={"/how-to-use"}
+                className="block w-auto relative m-4"
+                onClick={() => setIsMobileMenuClicked((prev) => !prev)}
+              >
+                How to Use
+              </Link>
+              <Link
+                href={"/contact"}
+                className="block w-auto relative m-4"
+                onClick={() => setIsMobileMenuClicked((prev) => !prev)}
+              >
+                Contact
+              </Link>
+              {!isLoggedIn ? (
+                <>
                   <Link
-                    href={item.href}
+                    href={"/login"}
                     className="block w-auto relative m-4"
-                    key={item.key}
                     onClick={() => setIsMobileMenuClicked((prev) => !prev)}
                   >
-                    {item.title}
+                    Login
                   </Link>
-                );
-              })}
+                  <Link
+                    href={"/signup"}
+                    className="block w-full relative m-4"
+                    onClick={() => setIsMobileMenuClicked((prev) => !prev)}
+                  >
+                    SignUp
+                  </Link>
+                </>
+              ) : (
+                <Button
+                  onClick={handleUserLogout}
+                  className="block w-auto relative m-4"
+                >
+                  Logout
+                </Button>
+              )}
             </div>
           )}
         </div>
