@@ -90,12 +90,24 @@ export async function POST(request: NextRequest) {
         }
 
         // Step 3 : If user is created we need to send him account verification email
-        await sendMail({
-            email: user.email,
-            emailType: "VERIFY",
-            userId: user._id,
-            fullName: user.fullName,
-        });
+        const emailResponse = await sendMail(
+            user.email,
+            "VERIFY",
+            user.username,
+            user._id
+        );
+
+        if (!emailResponse.success) {
+            await User.findByIdAndDelete(user._id);
+            return NextResponse.json(
+                new ApiResponse(
+                    false,
+                    emailResponse.statusCode,
+                    {},
+                    emailResponse.message
+                )
+            );
+        }
 
         // Step 4 : User successfully registered
         return NextResponse.json(
@@ -107,9 +119,16 @@ export async function POST(request: NextRequest) {
             )
         );
     } catch (error: any) {
-        console.error(`Internal server error while signing up a new user : ERROR : ${error}`);
+        console.error(
+            `Internal server error while signing up a new user : ERROR : ${error}`
+        );
         return NextResponse.json(
-            new ApiResponse(false, 500, {}, `Internal server error while signing up a new user : ERROR : ${error}`)
+            new ApiResponse(
+                false,
+                500,
+                {},
+                `Internal server error while signing up a new user : ERROR : ${error}`
+            )
         );
     }
 }

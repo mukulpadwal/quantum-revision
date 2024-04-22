@@ -47,10 +47,6 @@ const userSchema = new mongoose.Schema({
     resetPasswordTokenExpiry: {
         type: Date
     },
-    isLoggedIn: {
-        type: Boolean,
-        default: false,
-    },
     notes: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "Note"

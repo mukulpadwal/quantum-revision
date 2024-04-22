@@ -6,32 +6,32 @@ import Note from "@/models/notes.model";
 import Revision from "@/models/revision.model";
 import jwt from "jsonwebtoken";
 import conf from "@/conf/conf";
+import { auth } from "@/auth";
+
 
 export async function POST(request: NextRequest) {
     await connectToDB();
 
     try {
         const { title, date } = await request.json();
-        const token = request.cookies.get("token")?.value || "";
+        const session = await auth();
 
-        console.log();
+        console.log(session);
 
 
-        if (!token) {
+        if (session === null) {
             return NextResponse.json(
                 new ApiResponse(false, 400, {}, "Unauthorized Request.")
             );
         }
 
-        const decodedToken: any = jwt.verify(token, conf.tokenSecret);
-
-        const user = await User.findById(decodedToken._id);
+        const user = await User.findById(session.user._id);
 
 
         const note = new Note({
             title,
             entryDate: date,
-            owner: decodedToken._id,
+            owner: session.user._id,
         });
         await note.save();
 

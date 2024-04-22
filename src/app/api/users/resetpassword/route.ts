@@ -5,9 +5,10 @@ import validateEmail from "@/helpers/validateEmail";
 import User from "@/models/user.model";
 import { NextRequest, NextResponse } from "next/server";
 
-connectToDB();
 
 export async function POST(request: NextRequest) {
+    await connectToDB();
+    
     try {
         const formData = await request.json();
         const { email } = formData;
@@ -24,7 +25,23 @@ export async function POST(request: NextRequest) {
             return NextResponse.json(new ApiResponse(false, 400, {}, "No user found with this email address."))
         }
 
-        await sendMail({ email: user.email, emailType: "RESET", userId: user._id, fullName: user.fullName });
+        const emailResponse = await sendMail(
+            user.email,
+            "RESET",
+            user.username,
+            user._id
+        );
+
+        if (!emailResponse.success) {
+            return NextResponse.json(
+                new ApiResponse(
+                    false,
+                    emailResponse.statusCode,
+                    {},
+                    emailResponse.message
+                )
+            );
+        }
 
         return NextResponse.json(new ApiResponse(true, 200, {}, "Password reset link successfully sent to your email id."));
 
