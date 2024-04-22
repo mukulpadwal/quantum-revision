@@ -149,16 +149,22 @@ export default function Navbar() {
           </div>
           {isMobileMenuClicked && (
             <div className="absolute my-2 rounded-md  w-11/12 h-fit bg-white border shadow-lg dark:bg-black z-10">
-              {mobileMenuItems?.map((item) => (
-                <Link
-                  href={item.href}
-                  className="block w-auto relative m-4"
-                  key={item.key}
-                  onClick={() => setIsMobileMenuClicked((prev) => !prev)}
-                >
-                  {item.title}
-                </Link>
-              ))}
+              {mobileMenuItems?.map((item) => {
+                if (session && (item.key === 3 || item.key === 4)) {
+                  return;
+                }
+
+                return (
+                  <Link
+                    href={item.href}
+                    className="block w-auto relative m-4"
+                    key={item.key}
+                    onClick={() => setIsMobileMenuClicked((prev) => !prev)}
+                  >
+                    {item.title}
+                  </Link>
+                );
+              })}
             </div>
           )}
         </div>

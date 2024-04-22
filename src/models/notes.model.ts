@@ -15,8 +15,27 @@ const noteSchema = new mongoose.Schema({
     owner: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "users"
+    },
+    firstDate: {
+        type: Date,
+        required: true,
+        default: Date.now() + 1
+    },
+    secondDate: {
+        type: Date,
+        required: true,
+        default: Date.now() + 3
+    },
+    thirdDate: {
+        type: Date,
+        required: true,
+        default: Date.now() + 7
+    },
+    notification: {
+        type: Boolean,
+        default: false
     }
 }, { timestamps: true });
 
-const Note = mongoose.models.notes || mongoose.model("notes", noteSchema);
+const Note = mongoose.models?.notes || mongoose.model("notes", noteSchema);
 export default Note;

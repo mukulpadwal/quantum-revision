@@ -3,21 +3,14 @@ import ApiResponse from "@/helpers/ApiResponse";
 import { NextRequest, NextResponse } from "next/server";
 import User from "@/models/user.model";
 import Note from "@/models/notes.model";
-import Revision from "@/models/revision.model";
-import jwt from "jsonwebtoken";
-import conf from "@/conf/conf";
 import { auth } from "@/auth";
-
 
 export async function POST(request: NextRequest) {
     await connectToDB();
 
     try {
-        const { title, date } = await request.json();
         const session = await auth();
-
-        console.log(session);
-
+        const { title, createdAt } = await request.json();
 
         if (session === null) {
             return NextResponse.json(
@@ -27,32 +20,29 @@ export async function POST(request: NextRequest) {
 
         const user = await User.findById(session.user._id);
 
+        if (!user) {
+            return NextResponse.json(
+                new ApiResponse(false, 400, {}, "Unauthorized Request.")
+            );
+        }
 
         const note = new Note({
             title,
-            entryDate: date,
+            entryDate: createdAt,
             owner: session.user._id,
         });
-        await note.save();
 
-        const revision = new Revision({
-            firstDate: new Date(new Date(date).getTime() + 86400000 * 1),
-            secondDate: new Date(new Date(date).getTime() + 86400000 * 3),
-            thirdDate: new Date(new Date(date).getTime() + 86400000 * 7),
-            note: note._id,
-        });
-        await revision.save();
+        note.firstDate = new Date(new Date(createdAt).getTime() + 86400000 * 1);
+        note.secondDate = new Date(new Date(createdAt).getTime() + 86400000 * 3);
+        note.thirdDate = new Date(new Date(createdAt).getTime() + 86400000 * 7);
+
+        await note.save();
 
         user.notes.push(note._id);
         await user.save();
 
         return NextResponse.json(
-            new ApiResponse(
-                true,
-                201,
-                { note, revision },
-                "Note Created Successfully."
-            )
+            new ApiResponse(true, 201, note, "Note Created Successfully.")
         );
     } catch (error: any) {
         console.log(`Error while creating note : ERROR : ${error.message}`);

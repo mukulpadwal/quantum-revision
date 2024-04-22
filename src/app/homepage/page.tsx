@@ -45,15 +45,9 @@ import {
 import { SlCalender } from "react-icons/sl";
 import { MdNoteAdd } from "react-icons/md";
 import toast from "react-hot-toast";
-
-const notes = [
-  {
-    title: "INV001",
-    firstDate: "Paid",
-    secondDate: "$250.00",
-    thirdDate: "Credit Card",
-  },
-];
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { Switch } from "@/components/ui/switch";
 
 interface User {
   username?: string;
@@ -61,45 +55,39 @@ interface User {
 
 interface Note {
   title: string;
-  date: Date | undefined;
+  createdAt: Date | undefined;
 }
 
 interface RevisionData {
-  title: string;
-  firstDate: string;
-  secondDate: string;
-  thirdDate: string;
+  _id?: string;
+  title?: string;
+  createdAt?: Date | undefined;
+  firstDate?: Date | undefined;
+  secondDate?: Date | undefined;
+  thirdDate?: Date | undefined;
+  notification?: boolean;
 }
 
 export default function HomePage() {
-  const [currentUser, setCurrentUser] = useState<User>({
-    username: "",
-  });
+  const { data: session } = useSession();
+  const router = useRouter();
+
   const [noteData, setNoteData] = useState<Note>({
     title: "",
-    date: undefined,
+    createdAt: undefined,
   });
+
   const [revisionData, setRevisionData] = useState<Array<RevisionData>>([
     {
+      _id: "",
       title: "",
-      firstDate: "",
-      secondDate: "",
-      thirdDate: "",
+      createdAt: undefined,
+      firstDate: undefined,
+      secondDate: undefined,
+      thirdDate: undefined,
+      notification: false,
     },
   ]);
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const response = await axios.get("/api/users/me");
-
-        if (response.data.success) {
-          setCurrentUser({ ...response.data.data });
-        } else {
-        }
-      } catch (error: any) {}
-    })();
-  }, []);
 
   useEffect(() => {
     (async () => {
@@ -107,20 +95,28 @@ export default function HomePage() {
         const response = await axios.get("/api/notes/all");
 
         if (response.data.success) {
-          setRevisionData({ ...response.data.data });
+          setRevisionData(response.data.data.user_notes);
+          console.log(response.data.message);
         } else {
+          console.log(response.data.message);
         }
-      } catch (error: any) {}
+      } catch (error: any) {
+        console.error(`Error while fetching notes : ERROR : ${error}`);
+      }
     })();
-  }, []);
+  }, [noteData]);
 
   const handleSaveRevision = async () => {
     try {
       console.log(noteData);
-      if (noteData.title.trim().length > 0 && noteData.date !== undefined) {
+      if (
+        noteData.title.trim().length > 0 &&
+        noteData.createdAt !== undefined
+      ) {
         const response = await axios.post("/api/notes/create", noteData);
 
         if (response.data.success) {
+          router.refresh();
           toast.success(response.data.message);
         } else {
           toast.error(response.data.message);
@@ -133,11 +129,27 @@ export default function HomePage() {
     }
   };
 
+  const handleDeleteEntry = async (noteId: string | undefined) => {
+    try {
+      const response = await axios.delete("/api/notes/delete", {
+        data: JSON.stringify({ noteId }),
+      });
+
+      if (response.data.success) {
+        toast.success(response.data.message);
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error: any) {
+      console.log(`Some error occured while deleting entry.`);
+    }
+  };
+
   return (
     <div className="relative w-full h-screen flex flex-col justify-normal items-center gap-y-4">
       <div className="w-full flex flex-col md:flex-row justify-center md:justify-between items-center gap-y-4 md:gap-y-0 p-2">
         <h1 className="text-center sm:text-left text-3xl">
-          Welcome <strong>{currentUser.username}</strong>
+          Welcome <strong>{session?.user?.username}</strong>
         </h1>
         <div className="w-full relative sm:ml-auto flex-1 md:grow-0">
           <IoIosSearch className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -191,12 +203,12 @@ export default function HomePage() {
                       variant={"outline"}
                       className={cn(
                         "w-[240px] justify-start text-left font-normal",
-                        !noteData.date && "text-muted-foreground"
+                        !noteData.createdAt && "text-muted-foreground"
                       )}
                     >
                       <SlCalender className="mr-2 h-4 w-4" />
-                      {noteData.date ? (
-                        format(noteData.date, "PPP")
+                      {noteData.createdAt ? (
+                        format(noteData.createdAt, "PPP")
                       ) : (
                         <span>Pick a date</span>
                       )}
@@ -205,8 +217,10 @@ export default function HomePage() {
                   <PopoverContent className="w-auto p-0" align="start">
                     <Calendar
                       mode="single"
-                      selected={noteData.date}
-                      onSelect={(e) => setNoteData({ ...noteData, date: e })}
+                      selected={noteData.createdAt}
+                      onSelect={(e) =>
+                        setNoteData({ ...noteData, createdAt: e })
+                      }
                       initialFocus
                     />
                   </PopoverContent>
@@ -230,19 +244,39 @@ export default function HomePage() {
               <TableHead>1st Revision Date</TableHead>
               <TableHead>2nd Revision Date</TableHead>
               <TableHead>3rd Revision Date</TableHead>
-              <TableHead>Change Date</TableHead>
+              <TableHead>Notification</TableHead>
+              <TableHead>Delete Entry</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {revisionData.map((data, index) => (
-              <TableRow key={`${index}-${data.title}`}>
+            {revisionData.map((data) => (
+              <TableRow key={data._id}>
                 <TableCell>{data.title}</TableCell>
-                <TableCell>{data.title}</TableCell>
-                <TableCell>{data.firstDate}</TableCell>
-                <TableCell>{data.secondDate}</TableCell>
-                <TableCell>{data.thirdDate}</TableCell>
                 <TableCell>
-                  <Button>Change</Button>
+                  {new Date(data?.createdAt!).toDateString()}
+                </TableCell>
+                <TableCell>
+                  {new Date(data?.firstDate!).toDateString()}
+                </TableCell>
+                <TableCell>
+                  {new Date(data?.secondDate!).toDateString()}
+                </TableCell>
+                <TableCell>
+                  {new Date(data?.thirdDate!).toDateString()}
+                </TableCell>
+                <TableCell>
+                  <Switch
+                    id={data._id}
+                    checked={data.notification}
+                    onCheckedChange={(e) => {
+                      console.log(e);
+                    }}
+                  />
+                </TableCell>
+                <TableCell>
+                  <Button onClick={() => handleDeleteEntry(data._id)}>
+                    Delete
+                  </Button>
                 </TableCell>
               </TableRow>
             ))}
