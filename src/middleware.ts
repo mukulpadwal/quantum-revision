@@ -3,7 +3,6 @@ import { auth } from "./auth";
 
 export default auth(async (request: NextRequest) => {
     const session = await auth();
-    console.log(session);
 
     const path = request.nextUrl.pathname;
 
