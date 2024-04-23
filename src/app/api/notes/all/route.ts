@@ -34,7 +34,7 @@ export async function GET(request: NextRequest) {
                         {
                             $project: {
                                 title: 1,
-                                createdAt: 1,
+                                entryDate: 1,
                                 firstDate: 1,
                                 secondDate: 1,
                                 thirdDate: 1

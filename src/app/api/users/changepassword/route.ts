@@ -7,9 +7,9 @@ import User from "@/models/user.model";
 import bcrypt from "bcryptjs";
 import validatePassword from "@/helpers/validatePassword";
 
-connectToDB();
 
 export async function POST(request: NextRequest) {
+    await connectToDB();
     try {
         const formData = await request.json();
         const { oldPassword, newPassword, confirmNewPassword, token } = formData;
