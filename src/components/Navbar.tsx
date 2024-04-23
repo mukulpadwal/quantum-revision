@@ -11,9 +11,11 @@ import Image from "next/image";
 import { signOut } from "next-auth/react";
 import { useSession } from "next-auth/react";
 import toast from "react-hot-toast";
+import { usePathname } from "next/navigation";
 
 export default function Navbar() {
   const { data: session } = useSession();
+  const pathname = usePathname();
 
   const [isMobileMenuClicked, setIsMobileMenuClicked] =
     useState<boolean>(false);
@@ -41,12 +43,42 @@ export default function Navbar() {
     <header>
       <nav className="md:border md:border-x-0 md:border-t-0 relative top-0 w-full h-full p-4 flex justify-between items-center">
         <div className="hidden md:flex md:justify-center md:items-center md:gap-x-6  md:order-1">
-          <Link href={"/"} className={`underline underline-offset-4`}>
+          <Link
+            href={"/"}
+            className={`${
+              pathname === "/" ? "active underline underline-offset-4" : ""
+            }`}
+          >
             Home
           </Link>
-          <Link href={"/about"}>About</Link>
-          <Link href={"/how-to-use"}>How to Use</Link>
-          <Link href={"/contact"}>Contact</Link>
+          <Link
+            href={"/about"}
+            className={`${
+              pathname === "/about" ? "active underline underline-offset-4" : ""
+            }`}
+          >
+            About
+          </Link>
+          <Link
+            href={"/how-to-use"}
+            className={`${
+              pathname === "/how-to-use"
+                ? "active underline underline-offset-4"
+                : ""
+            }`}
+          >
+            How to Use
+          </Link>
+          <Link
+            href={"/contact"}
+            className={`${
+              pathname === "/contact"
+                ? "active underline underline-offset-4"
+                : ""
+            }`}
+          >
+            Contact
+          </Link>
         </div>
 
         <div className="flex order-2">
