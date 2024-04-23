@@ -46,12 +46,7 @@ import { SlCalender } from "react-icons/sl";
 import { MdNoteAdd } from "react-icons/md";
 import toast from "react-hot-toast";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import { Switch } from "@/components/ui/switch";
-
-interface User {
-  username?: string;
-}
 
 interface Note {
   title: string;
@@ -61,7 +56,7 @@ interface Note {
 interface RevisionData {
   _id?: string;
   title?: string;
-  createdAt?: Date | undefined;
+  entryDate?: Date | undefined;
   firstDate?: Date | undefined;
   secondDate?: Date | undefined;
   thirdDate?: Date | undefined;
@@ -70,7 +65,6 @@ interface RevisionData {
 
 export default function HomePage() {
   const { data: session } = useSession();
-  const router = useRouter();
 
   const [noteData, setNoteData] = useState<Note>({
     title: "",
@@ -81,7 +75,7 @@ export default function HomePage() {
     {
       _id: "",
       title: "",
-      createdAt: undefined,
+      entryDate: undefined,
       firstDate: undefined,
       secondDate: undefined,
       thirdDate: undefined,
@@ -108,7 +102,6 @@ export default function HomePage() {
 
   const handleSaveRevision = async () => {
     try {
-      console.log(noteData);
       if (
         noteData.title.trim().length > 0 &&
         noteData.createdAt !== undefined
@@ -116,8 +109,10 @@ export default function HomePage() {
         const response = await axios.post("/api/notes/create", noteData);
 
         if (response.data.success) {
-          router.refresh();
           toast.success(response.data.message);
+          setTimeout(() => {
+            window.location.reload();
+          }, 500);
         } else {
           toast.error(response.data.message);
         }
@@ -137,6 +132,9 @@ export default function HomePage() {
 
       if (response.data.success) {
         toast.success(response.data.message);
+        setTimeout(() => {
+          window.location.reload();
+        }, 500);
       } else {
         toast.error(response.data.message);
       }
@@ -147,7 +145,7 @@ export default function HomePage() {
 
   return (
     <div className="relative w-full h-screen flex flex-col justify-normal items-center gap-y-4">
-      <div className="w-full flex flex-col md:flex-row justify-center md:justify-between items-center gap-y-4 md:gap-y-0 p-2">
+      <div className="w-full flex flex-col md:flex-row justify-center md:justify-between items-center gap-y-4 md:gap-y-0 p-2 sm:my-4">
         <h1 className="text-center sm:text-left text-3xl">
           Welcome <strong>{session?.user?.username}</strong>
         </h1>
@@ -160,7 +158,7 @@ export default function HomePage() {
           />
         </div>
       </div>
-      <div className="w-full flex justify-center items-center">
+      <div className="w-full flex justify-center items-center p-2">
         <Dialog>
           <DialogTrigger asChild>
             <Button
@@ -170,7 +168,7 @@ export default function HomePage() {
               <MdNoteAdd className="h-4 w-4" /> Add
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px]">
+          <DialogContent className="max-w-[400px] sm:max-w-[425px]">
             <DialogHeader>
               <DialogTitle>Add Revision Entry</DialogTitle>
               <DialogDescription>
@@ -181,7 +179,7 @@ export default function HomePage() {
             <div className="grid gap-4 py-4">
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="title" className="text-right">
-                  Title
+                  Topic
                 </Label>
                 <Input
                   id="title"
@@ -239,7 +237,7 @@ export default function HomePage() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Title</TableHead>
+              <TableHead>Topic</TableHead>
               <TableHead>Created At</TableHead>
               <TableHead>1st Revision Date</TableHead>
               <TableHead>2nd Revision Date</TableHead>
@@ -253,7 +251,7 @@ export default function HomePage() {
               <TableRow key={data._id}>
                 <TableCell>{data.title}</TableCell>
                 <TableCell>
-                  {new Date(data?.createdAt!).toDateString()}
+                  {new Date(data?.entryDate!).toDateString()}
                 </TableCell>
                 <TableCell>
                   {new Date(data?.firstDate!).toDateString()}
@@ -290,12 +288,12 @@ export default function HomePage() {
               <PaginationPrevious href="#" />
             </PaginationItem>
             <PaginationItem>
-              <PaginationLink href="#">1</PaginationLink>
+              <PaginationLink href="#" isActive>
+                1
+              </PaginationLink>
             </PaginationItem>
             <PaginationItem>
-              <PaginationLink href="#" isActive>
-                2
-              </PaginationLink>
+              <PaginationLink href="#">2</PaginationLink>
             </PaginationItem>
             <PaginationItem>
               <PaginationLink href="#">3</PaginationLink>
