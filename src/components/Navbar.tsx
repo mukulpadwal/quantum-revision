@@ -11,11 +11,20 @@ import Image from "next/image";
 import { signOut } from "next-auth/react";
 import { useSession } from "next-auth/react";
 import toast from "react-hot-toast";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export default function Navbar() {
   const { data: session } = useSession();
   const pathname = usePathname();
+  const router = useRouter();
 
   const [isMobileMenuClicked, setIsMobileMenuClicked] =
     useState<boolean>(false);
@@ -43,14 +52,30 @@ export default function Navbar() {
     <header>
       <nav className="md:border md:border-x-0 md:border-t-0 relative top-0 w-full h-full p-4 flex justify-between items-center">
         <div className="hidden md:flex md:justify-center md:items-center md:gap-x-6  md:order-1">
-          <Link
-            href={"/"}
-            className={`${
-              pathname === "/" ? "active underline underline-offset-4" : ""
-            }`}
-          >
-            Home
-          </Link>
+          {!isLoggedIn ? (
+            <Link
+              href={"/"}
+              className={`${
+                pathname === "/"
+                  ? "active underline underline-offset-4"
+                  : "no-underline"
+              }`}
+            >
+              Home
+            </Link>
+          ) : (
+            <Link
+              href={"/"}
+              className={`${
+                pathname === "/homepage"
+                  ? "active underline underline-offset-4"
+                  : "no-underline"
+              }`}
+            >
+              Home
+            </Link>
+          )}
+
           <Link
             href={"/about"}
             className={`${
@@ -114,12 +139,36 @@ export default function Navbar() {
               </Link>
             </>
           ) : (
-            <Button
-              onClick={handleUserLogout}
-              className={`hidden md:inline-block`}
-            >
-              Logout
-            </Button>
+            <>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="border overflow-hidden rounded-full "
+                  >
+                    {String(session?.user?.username).charAt(0).toUpperCase()}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => router.push("/settings")}>
+                    Settings
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>Support</DropdownMenuItem>
+                  <DropdownMenuSeparator className="hidden md:inline-block w-full" />
+                  <DropdownMenuItem>
+                    <Button
+                      onClick={handleUserLogout}
+                      className={`hidden md:inline-block w-full`}
+                    >
+                      Logout
+                    </Button>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </>
           )}
 
           <ThemeSwitcher />
