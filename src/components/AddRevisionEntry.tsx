@@ -24,16 +24,38 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import Note from "@/types/Note";
+import axios from "axios";
+import toast from "react-hot-toast";
 
-const AddRevisionEntry = ({
-  handleSaveRevision,
-}: {
-  handleSaveRevision: Function;
-}) => {
+const AddRevisionEntry = () => {
   const [noteData, setNoteData] = useState<Note>({
     title: "",
     createdAt: undefined,
   });
+
+  const handleSaveRevision = async () => {
+    try {
+      if (
+        noteData.title.trim().length > 0 &&
+        noteData.createdAt !== undefined
+      ) {
+        const response = await axios.post("/api/notes/create", noteData);
+
+        if (response.data.success) {
+          toast.success(response.data.message);
+          setTimeout(() => {
+            window.location.reload();
+          }, 500);
+        } else {
+          toast.error(response.data.message);
+        }
+      } else {
+        toast.error("Please provide all the fields.");
+      }
+    } catch (error: any) {
+      console.log(`Some error occured while creating entry.`);
+    }
+  };
 
   return (
     <Dialog>
@@ -101,7 +123,7 @@ const AddRevisionEntry = ({
           </div>
         </div>
         <DialogFooter>
-          <Button type="submit" onClick={() => handleSaveRevision(noteData)}>
+          <Button type="submit" onClick={handleSaveRevision}>
             Save
           </Button>
         </DialogFooter>
