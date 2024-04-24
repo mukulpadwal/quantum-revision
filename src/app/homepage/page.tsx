@@ -14,44 +14,20 @@ import {
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { format } from "date-fns";
-
-import { cn } from "@/lib/utils";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { SlCalender } from "react-icons/sl";
-import { MdNoteAdd } from "react-icons/md";
 import toast from "react-hot-toast";
 import { useSession } from "next-auth/react";
 import { Switch } from "@/components/ui/switch";
+import AddRevisionEntry from "@/components/AddRevisionEntry";
+import Note from "@/types/Note";
 
-interface Note {
-  title: string;
-  createdAt: Date | undefined;
-}
 
 interface RevisionData {
   _id?: string;
@@ -65,11 +41,6 @@ interface RevisionData {
 
 export default function HomePage() {
   const { data: session } = useSession();
-
-  const [noteData, setNoteData] = useState<Note>({
-    title: "",
-    createdAt: undefined,
-  });
 
   const [revisionData, setRevisionData] = useState<Array<RevisionData>>([
     {
@@ -98,9 +69,9 @@ export default function HomePage() {
         console.error(`Error while fetching notes : ERROR : ${error}`);
       }
     })();
-  }, [noteData]);
+  }, []);
 
-  const handleSaveRevision = async () => {
+  const handleSaveRevision = async (noteData: Note) => {
     try {
       if (
         noteData.title.trim().length > 0 &&
@@ -159,79 +130,7 @@ export default function HomePage() {
         </div>
       </div>
       <div className="w-full flex justify-center items-center p-2">
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button
-              variant="outline"
-              className="flex flex-row justify-center items-center gap-x-2"
-            >
-              <MdNoteAdd className="h-4 w-4" /> Add
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-[400px] sm:max-w-[425px]">
-            <DialogHeader>
-              <DialogTitle>Add Revision Entry</DialogTitle>
-              <DialogDescription>
-                Add the title for your note and select the date. Click save when
-                you&apos;re done.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="title" className="text-right">
-                  Topic
-                </Label>
-                <Input
-                  id="title"
-                  value={noteData.title}
-                  onChange={(e) =>
-                    setNoteData({ ...noteData, title: e.target.value })
-                  }
-                  className="col-span-3"
-                  required
-                />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="date" className="text-right">
-                  Date
-                </Label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant={"outline"}
-                      className={cn(
-                        "w-[240px] justify-start text-left font-normal",
-                        !noteData.createdAt && "text-muted-foreground"
-                      )}
-                    >
-                      <SlCalender className="mr-2 h-4 w-4" />
-                      {noteData.createdAt ? (
-                        format(noteData.createdAt, "PPP")
-                      ) : (
-                        <span>Pick a date</span>
-                      )}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={noteData.createdAt}
-                      onSelect={(e) =>
-                        setNoteData({ ...noteData, createdAt: e })
-                      }
-                      initialFocus
-                    />
-                  </PopoverContent>
-                </Popover>
-              </div>
-            </div>
-            <DialogFooter>
-              <Button type="submit" onClick={handleSaveRevision}>
-                Save
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+        <AddRevisionEntry handleSaveRevision={handleSaveRevision} />
       </div>
       <div className="w-full">
         <Table>
