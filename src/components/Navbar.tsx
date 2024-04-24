@@ -153,10 +153,9 @@ export default function Navbar() {
                 <DropdownMenuContent align="end">
                   <DropdownMenuLabel>My Account</DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => router.push("/settings")}>
-                    Settings
+                  <DropdownMenuItem className="cursor-pointer" onClick={() => router.push("/profile")}>
+                    Profile
                   </DropdownMenuItem>
-                  <DropdownMenuItem>Support</DropdownMenuItem>
                   <DropdownMenuSeparator className="hidden md:inline-block w-full" />
                   <DropdownMenuItem>
                     <Button

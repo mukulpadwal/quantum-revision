@@ -8,7 +8,7 @@ export default auth(async (request: NextRequest) => {
 
   // If the user is not logged in
   if (!session) {
-    if (path === "/homepage" || path === "/my-account") {
+    if (path === "/homepage" || path === "/profile") {
       return NextResponse.redirect(new URL("/login", request.nextUrl));
     }
   }
@@ -23,5 +23,5 @@ export default auth(async (request: NextRequest) => {
 
 // Always run middleware logic on these routes
 export const config = {
-  matcher: ["/", "/login", "/signup", "/homepage", "/my-account"],
+  matcher: ["/", "/login", "/signup", "/homepage", "/profile"],
 };
