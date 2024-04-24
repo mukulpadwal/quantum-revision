@@ -2,31 +2,26 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "./auth";
 
 export default auth(async (request: NextRequest) => {
-    const session = await auth();
+  const session = await auth();
 
-    const path = request.nextUrl.pathname;
+  const path = request.nextUrl.pathname;
 
-    const isPublicPath = path === "/" || path === "/login" || path === "/signup";
-
-    if (session && isPublicPath) {
-        return NextResponse.redirect(new URL("/homepage", request.nextUrl));
+  // If the user is not logged in
+  if (!session) {
+    if (path === "/homepage" || path === "/my-account") {
+      return NextResponse.redirect(new URL("/login", request.nextUrl));
     }
+  }
 
-    if (!session && !isPublicPath) {
-        return NextResponse.redirect(new URL("/login", request.nextUrl));
+  // If the user is logged in
+  if (session) {
+    if (path === "/" || path === "/login" || path === "/signup") {
+      return NextResponse.redirect(new URL("/homepage", request.nextUrl));
     }
+  }
 });
 
-// Optionally, don't invoke Middleware on some paths
+// Always run middleware logic on these routes
 export const config = {
-    matcher: [
-        "/((?!api|_next/static|_next/image|favicon.ico).*)",
-        "/about",
-        "/contact",
-        "/faqs",
-        "/privacypolicy",
-        "/how-to-use",
-        "/resetpassword",
-        "/changepassword",
-    ],
+  matcher: ["/", "/login", "/signup", "/homepage", "/my-account"],
 };
