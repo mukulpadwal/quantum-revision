@@ -1,4 +1,4 @@
 export default interface Note {
     title: string;
-    createdAt: Date | undefined;
+    entryDate: Date | undefined;
 }

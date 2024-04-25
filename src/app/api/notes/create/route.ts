@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
 
     try {
         const session = await auth();
-        const { title, createdAt } = await request.json();
+        const { title, entryDate } = await request.json();
 
         if (session === null) {
             return NextResponse.json(
@@ -27,14 +27,14 @@ export async function POST(request: NextRequest) {
         }
 
         const note = new Note({
-            title,
-            entryDate: createdAt,
+            title: title,
+            entryDate: entryDate,
             owner: session.user._id,
         });
 
-        note.firstDate = new Date(new Date(createdAt).getTime() + 86400000 * 1);
-        note.secondDate = new Date(new Date(createdAt).getTime() + 86400000 * 3);
-        note.thirdDate = new Date(new Date(createdAt).getTime() + 86400000 * 7);
+        note.firstDate = new Date(new Date(entryDate).getTime() + 86400000 * 1);
+        note.secondDate = new Date(new Date(entryDate).getTime() + 86400000 * 3);
+        note.thirdDate = new Date(new Date(entryDate).getTime() + 86400000 * 7);
 
         await note.save();
 

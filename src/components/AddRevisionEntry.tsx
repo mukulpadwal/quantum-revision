@@ -30,14 +30,14 @@ import toast from "react-hot-toast";
 const AddRevisionEntry = () => {
   const [noteData, setNoteData] = useState<Note>({
     title: "",
-    createdAt: undefined,
+    entryDate: undefined,
   });
 
   const handleSaveRevision = async () => {
-    try {
+    try {   
       if (
         noteData.title.trim().length > 0 &&
-        noteData.createdAt !== undefined
+        noteData.entryDate !== undefined
       ) {
         const response = await axios.post("/api/notes/create", noteData);
 
@@ -100,12 +100,12 @@ const AddRevisionEntry = () => {
                   variant={"outline"}
                   className={cn(
                     "w-[240px] justify-start text-left font-normal",
-                    !noteData.createdAt && "text-muted-foreground"
+                    !noteData.entryDate && "text-muted-foreground"
                   )}
                 >
                   <SlCalender className="mr-2 h-4 w-4" />
-                  {noteData.createdAt ? (
-                    format(noteData.createdAt, "PPP")
+                  {noteData.entryDate ? (
+                    format(noteData.entryDate, "PPP")
                   ) : (
                     <span>Pick a date</span>
                   )}
@@ -114,8 +114,8 @@ const AddRevisionEntry = () => {
               <PopoverContent className="w-auto p-0" align="start">
                 <Calendar
                   mode="single"
-                  selected={noteData.createdAt}
-                  onSelect={(e) => setNoteData({ ...noteData, createdAt: e })}
+                  selected={noteData.entryDate}
+                  onSelect={(e) => setNoteData({ ...noteData, entryDate: e })}
                   initialFocus
                 />
               </PopoverContent>
