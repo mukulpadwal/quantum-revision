@@ -4,8 +4,6 @@ import ApiResponse from "@/helpers/ApiResponse";
 
 export async function DELETE(request: NextRequest) {
     try {
-        // await novu.subscribers.delete("");
-
         // TODO
 
         return NextResponse.json(
