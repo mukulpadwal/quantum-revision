@@ -6,6 +6,7 @@ import validatePassword from "@/helpers/validatePassword";
 import User from "@/models/user.model";
 import bcrypt from "bcryptjs";
 import sendMail from "@/helpers/sendMail";
+import novu from "@/helpers/novu";
 
 export async function POST(request: NextRequest) {
     await connectToDB();
@@ -89,7 +90,17 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // Step 3 : If user is created we need to send him account verification email
+        // Step 3 : Create a novuSubscriberId for the user
+        await novu.subscribers.identify(user._id, {
+            email: user.email,
+            firstName: user?.fullName?.split(" ")[0],
+            lastName: user?.fullName?.split(" ")[1] || "",
+            data: {
+                username: user?.username,
+            },
+        });
+
+        // Step 4 : If user is created we need to send him account verification email
         const emailResponse = await sendMail(
             user.email,
             "VERIFY",
@@ -109,7 +120,7 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // Step 4 : User successfully registered
+        // Step 5 : User successfully registered
         return NextResponse.json(
             new ApiResponse(
                 true,
