@@ -5,6 +5,7 @@ const conf = {
     domain: String(process.env.DOMAIN),
     authJsToken: String(process.env.AUTH_SECRET),
     resendApiKey: String(process.env.RESEND_API_KEY),
+    novuApiKey: String(process.env.NOVU_API_KEY)
 }
 
 export default conf;
