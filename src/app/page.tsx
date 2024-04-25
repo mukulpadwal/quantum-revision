@@ -12,7 +12,7 @@ export default function LandingPage() {
             height={300}
             width={300}
             alt="Quantum Revision Logo"
-            className="rounded-full"
+            className="border p-2 rounded-full"
           />
         </div>
         <div className="w-full h-auto md:h-full flex flex-col justify-center items-center gap-y-4 m-4">
