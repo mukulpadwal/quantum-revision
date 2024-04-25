@@ -37,7 +37,8 @@ export async function GET(request: NextRequest) {
                                 entryDate: 1,
                                 firstDate: 1,
                                 secondDate: 1,
-                                thirdDate: 1
+                                thirdDate: 1,
+                                notification: 1
                             },
                         },
                     ],

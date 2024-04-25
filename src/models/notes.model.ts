@@ -34,6 +34,10 @@ const noteSchema = new mongoose.Schema({
     notification: {
         type: Boolean,
         default: false
+    },
+    novuTransactionId: {
+        type: String,
+        default: ""
     }
 }, { timestamps: true });
 

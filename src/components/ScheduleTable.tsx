@@ -60,41 +60,73 @@ const ScheduleTable = () => {
         toast.error(response.data.message);
       }
     } catch (error: any) {
-      console.log(`Some error occured while deleting entry.`);
+      console.error(`Some error occured while deleting entry.`);
+    }
+  };
+
+  const handleNotification = async (e: any, data: RevisionData) => {
+    try {
+      data.notification = e;
+
+      const response = await axios.post("/api/novu/notification/trigger", data);
+
+      if (response.data.success) {
+        toast.success(response.data.message);
+      } else {
+        toast.error(response.data.message);
+      }
+
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    } catch (error) {
+      console.log(`Some error occured while turning on the notification.`);
     }
   };
 
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>Topic</TableHead>
-          <TableHead>Created At</TableHead>
-          <TableHead>1st Revision Date</TableHead>
-          <TableHead>2nd Revision Date</TableHead>
-          <TableHead>3rd Revision Date</TableHead>
-          <TableHead>Notification</TableHead>
-          <TableHead>Delete Entry</TableHead>
+    <Table className="border w-full">
+      <TableHeader className="border">
+        <TableRow className="border">
+          <TableHead className="border text-center">Topic</TableHead>
+          <TableHead className="border text-center">Created At</TableHead>
+          <TableHead className="border text-center">
+            1st Revision Date
+          </TableHead>
+          <TableHead className="border text-center">
+            2nd Revision Date
+          </TableHead>
+          <TableHead className="border text-center">
+            3rd Revision Date
+          </TableHead>
+          <TableHead className="border text-center">Notification</TableHead>
+          <TableHead className="border text-center">Delete Entry</TableHead>
         </TableRow>
       </TableHeader>
-      <TableBody>
+      <TableBody className="border">
         {revisionData.map((data) => (
-          <TableRow key={data._id}>
-            <TableCell>{data.title}</TableCell>
-            <TableCell>{new Date(data?.entryDate!).toDateString()}</TableCell>
-            <TableCell>{new Date(data?.firstDate!).toDateString()}</TableCell>
-            <TableCell>{new Date(data?.secondDate!).toDateString()}</TableCell>
-            <TableCell>{new Date(data?.thirdDate!).toDateString()}</TableCell>
-            <TableCell>
+          <TableRow className="border" key={data._id}>
+            <TableCell className="border text-center">{data.title}</TableCell>
+            <TableCell className="border text-center">
+              {new Date(data?.entryDate!).toDateString()}
+            </TableCell>
+            <TableCell className="border text-center">
+              {new Date(data?.firstDate!).toDateString()}
+            </TableCell>
+            <TableCell className="border text-center">
+              {new Date(data?.secondDate!).toDateString()}
+            </TableCell>
+            <TableCell className="border text-center">
+              {new Date(data?.thirdDate!).toDateString()}
+            </TableCell>
+            <TableCell className="border text-center">
               <Switch
                 id={data._id}
                 checked={data.notification}
-                onCheckedChange={(e) => {
-                  console.log(e);
-                }}
+                onCheckedChange={(e) => handleNotification(e, data)}
               />
             </TableCell>
-            <TableCell>
+            <TableCell className="border text-center">
               <Button onClick={() => handleDeleteEntry(data._id)}>
                 Delete
               </Button>
