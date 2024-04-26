@@ -13,7 +13,6 @@ export async function POST(request: NextRequest) {
     const {
       _id,
       title,
-      entryDate,
       firstDate,
       secondDate,
       thirdDate,
@@ -36,13 +35,19 @@ export async function POST(request: NextRequest) {
           subscriberId: session.user._id,
         },
         payload: {
-          sendAt: new Date(
-            new Date(entryDate).getTime() + 86400000 * 2
-          ).toISOString(),
-
+          subject: `📚 Quantum Revision Reminder: ${title}🚀`,
           email: session.user.email,
           title: title,
           username: session.user.username,
+          firstSendAt: new Date(
+            new Date(firstDate).getTime() + 86400000
+          ).toISOString(),
+          secondSendAt: new Date(
+            new Date(secondDate).getTime() + 86400000
+          ).toISOString(),
+          thirdSendAt: new Date(
+            new Date(thirdDate).getTime() + 86400000
+          ).toISOString(),
         },
       });
 
@@ -54,8 +59,6 @@ export async function POST(request: NextRequest) {
       note.novuTransactionId = "";
     }
 
-    note.notification = notification;
-    await note.save();
 
     if (!response?.data?.data) {
       return NextResponse.json(
@@ -63,10 +66,16 @@ export async function POST(request: NextRequest) {
           true,
           400,
           {},
-          `Something went wrong  to switch on notification.`
+          `Something went wrong  to switch on notification. Please try again later.`
         )
       );
     }
+
+    note.notification = notification;
+    await note.save();
+
+
+    console.log(response.data);
 
     if (!notification) {
       return NextResponse.json(
@@ -75,7 +84,7 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json(
-      new ApiResponse(true, 200, {}, `Notification switched on succesfully`)
+      new ApiResponse(true, 200, {}, `Notification switched on succesfully. You will be notified on particular dates to revise the topic.`)
     );
   } catch (error: any) {
     console.error(`Error while sending notification : ERROR : ${error}`);
