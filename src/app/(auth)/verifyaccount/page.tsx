@@ -6,13 +6,12 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { MdOutlineDomainVerification } from "react-icons/md";
+import { Suspense } from "react";
 
-export default function VerifyAccountPage() {
+function VerifyAccount() {
   const router = useRouter();
   const query = useSearchParams();
   const [verificationToken, setVerificationToken] = useState<string>("");
-
-  console.log(verificationToken);
 
   const handleAccountVerification = async () => {
     try {
@@ -53,5 +52,14 @@ export default function VerifyAccountPage() {
         <MdOutlineDomainVerification className="h-6 w-6" /> Verify Your Account
       </Button>
     </div>
+  );
+}
+
+export default function VerifyAccountPage() {
+
+  return (
+    <Suspense>
+      <VerifyAccount />
+    </Suspense>
   );
 }
