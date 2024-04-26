@@ -16,6 +16,7 @@ import { MdOutlineLockReset } from "react-icons/md";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { Suspense } from "react";
 
 interface ResetPasswordFormData {
   oldPassword: string;
@@ -23,7 +24,7 @@ interface ResetPasswordFormData {
   confirmNewPassword: string;
 }
 
-export default function ChangePasswordPage() {
+function ChangePassword() {
   const router = useRouter();
   const query = useSearchParams();
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
@@ -79,74 +80,84 @@ export default function ChangePasswordPage() {
   };
 
   return (
-    <Card className="mx-auto max-w-sm">
-      <CardHeader>
-        <CardTitle className="text-2xl">Change Password</CardTitle>
-        <CardDescription className="w-full">
-          Please enter your old and new passwords to complete the password
-          change process.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="grid gap-4">
-          <div className="grid gap-2">
-            <Label htmlFor="old-password">Old Password</Label>
-            <Input
-              id="old-password"
-              type="password"
-              name="old-password"
-              placeholder="********"
-              value={formData.oldPassword}
-              onChange={(e) =>
-                setFormData({ ...formData, oldPassword: e.target.value })
-              }
-              required
-            />
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="new-password">New Password</Label>
+    <Suspense>
+      <Card className="mx-auto max-w-sm">
+        <CardHeader>
+          <CardTitle className="text-2xl">Change Password</CardTitle>
+          <CardDescription className="w-full">
+            Please enter your old and new passwords to complete the password
+            change process.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-4">
+            <div className="grid gap-2">
+              <Label htmlFor="old-password">Old Password</Label>
+              <Input
+                id="old-password"
+                type="password"
+                name="old-password"
+                placeholder="********"
+                value={formData.oldPassword}
+                onChange={(e) =>
+                  setFormData({ ...formData, oldPassword: e.target.value })
+                }
+                required
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="new-password">New Password</Label>
 
-            <Input
-              id="new-password"
-              type="password"
-              name="new-password"
-              placeholder="********"
-              value={formData.newPassword}
-              onChange={(e) =>
-                setFormData({ ...formData, newPassword: e.target.value })
-              }
-              required
-            />
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="confirm-new-password">Confirm New Password</Label>
+              <Input
+                id="new-password"
+                type="password"
+                name="new-password"
+                placeholder="********"
+                value={formData.newPassword}
+                onChange={(e) =>
+                  setFormData({ ...formData, newPassword: e.target.value })
+                }
+                required
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="confirm-new-password">Confirm New Password</Label>
 
-            <Input
-              id="confirm-new-password"
-              type="password"
-              name="confirm-new-password"
-              placeholder="********"
-              value={formData.confirmNewPassword}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  confirmNewPassword: e.target.value,
-                })
-              }
-              required
-            />
+              <Input
+                id="confirm-new-password"
+                type="password"
+                name="confirm-new-password"
+                placeholder="********"
+                value={formData.confirmNewPassword}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    confirmNewPassword: e.target.value,
+                  })
+                }
+                required
+              />
+            </div>
+            <Button
+              type="submit"
+              className="w-full flex flex-row items-center justify-center gap-x-2"
+              disabled={isDisabled}
+              onClick={handleChangePassword}
+            >
+              <MdOutlineLockReset className="w-5 h-5" />
+              Change Password
+            </Button>
           </div>
-          <Button
-            type="submit"
-            className="w-full flex flex-row items-center justify-center gap-x-2"
-            disabled={isDisabled}
-            onClick={handleChangePassword}
-          >
-            <MdOutlineLockReset className="w-5 h-5" />
-            Change Password
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    </Suspense>
+  );
+}
+
+export default function ChangePasswordPage() {
+  return (
+    <Suspense>
+      <ChangePassword />
+    </Suspense>
   );
 }

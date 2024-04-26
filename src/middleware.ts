@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "./auth";
 
-export default auth(async (request: NextRequest) => {
-  const session = await auth();
+export async function middleware(request: NextRequest) {
+  const session = request.cookies.get("authjs.session-token")?.value || "";
 
   const path = request.nextUrl.pathname;
 
@@ -19,7 +18,9 @@ export default auth(async (request: NextRequest) => {
       return NextResponse.redirect(new URL("/homepage", request.nextUrl));
     }
   }
-});
+
+  return NextResponse.next();
+}
 
 // Always run middleware logic on these routes
 export const config = {
