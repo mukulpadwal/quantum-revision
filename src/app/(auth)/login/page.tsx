@@ -40,21 +40,21 @@ export default function LoginPage() {
         formData.password.trim().length > 0
       ) {
         const response = await signIn("credentials", {
-          ...formData,
           redirect: false,
+          ...formData,
         });
+
         console.log(response);
 
         if (response?.ok) {
-          if (response.error === null) {
-            toast.success("Signed In successfully.");
-            setTimeout(() => {
-              router.push("/homepage");
-            }, 1500);
-          } else {
-            toast.error(
-              "Could not log in. Kindly make sure your account is activated."
-            );
+          if (response.error === "CredentialsSignin") {
+            toast.error("Incorrect Email or Password.");
+          }
+
+          if (response.url) {
+            toast.success("LogIn Success.");
+
+            router.replace("/homepage");
           }
         } else {
           toast.error("Could not log in. Please try again.");
@@ -62,14 +62,13 @@ export default function LoginPage() {
       } else {
         toast.error("Please provide data in all the fields...");
       }
-
-      setIsDisabled(false);
     } catch (error: any) {
-      setIsDisabled(false);
       console.log(error.message);
       toast.error(
         "Something went wrong while creating your account. Please try again."
       );
+    } finally {
+      setIsDisabled(false);
     }
   };
 
