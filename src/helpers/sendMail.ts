@@ -5,6 +5,7 @@ import jwt from "jsonwebtoken";
 import conf from "@/conf/conf";
 import User from "@/models/user.model";
 import { Resend } from "resend";
+import generateOTP from "./generateOTP";
 
 export default async function sendVerificationEmail(
     email: string,
@@ -16,15 +17,14 @@ export default async function sendVerificationEmail(
         const resend = new Resend(conf.resendApiKey);
         const token = jwt.sign({ _id: userId }, conf.tokenSecret);
 
-        const accountVerificationLink = `${conf.domain}/verifyaccount?token=${token}`;
+        const otp = generateOTP();
         const changePasswordLink = `${conf.domain}/changepassword?token=${token}`;
-
 
         if (emailType === "VERIFY") {
             await User.findByIdAndUpdate(userId, {
                 $set: {
-                    verifyAccountToken: token,
-                    verifyAccountTokenExpiry: Date.now() + 86400000,
+                    verifyAccountOtp: otp,
+                    verifyAccountOtpExpiry: Date.now() + 86400000,
                 },
             });
         } else if (emailType === "RESET") {
@@ -41,11 +41,11 @@ export default async function sendVerificationEmail(
             to: email,
             subject:
                 emailType === "VERIFY"
-                    ? "Quantum Revision | Verification Link"
-                    : "Quantum Revision | Reset Password",
+                    ? "Quantum Revision | Account Verification"
+                    : "Quantum Revision | Password Reset",
             react:
                 emailType === "VERIFY"
-                    ? AccountVerificationEmail({ username, accountVerificationLink })
+                    ? AccountVerificationEmail({ username, otp })
                     : PasswordResetEmail({ username, changePasswordLink }),
         });
 

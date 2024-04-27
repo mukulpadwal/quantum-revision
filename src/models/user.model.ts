@@ -35,10 +35,10 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-    verifyAccountToken: {
+    verifyAccountOtp: {
         type: String
     },
-    verifyAccountTokenExpiry: {
+    verifyAccountOtpExpiry: {
         type: Date
     },
     resetPasswordToken: {
