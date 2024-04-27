@@ -38,9 +38,10 @@ export default function SignupPage() {
   const [creating, setCreating] = useState<boolean>(false);
 
   const handleUserSignUp = async () => {
+    setIsDisabled(true);
+    setCreating(true);
+
     try {
-      setIsDisabled(true);
-      setCreating(true);
       // Validate data in all the fields
       if (
         formData.username.trim().length > 0 &&
@@ -52,32 +53,31 @@ export default function SignupPage() {
 
         if (response.data.success) {
           toast.success(response.data.message);
+
+          setTimeout(() => {
+            router.replace(`/verifyaccount/${formData.username}`);
+          }, 1500);
+
           setFormData({
             username: "",
             fullName: "",
             email: "",
             password: "",
           });
-          setTimeout(() => {
-            router.push("/login");
-          }, 1500);
         } else {
           toast.error(response.data.message);
         }
       } else {
         toast.error("Please provide data in all the fields...");
       }
-
-      setIsDisabled(false);
-      setCreating(false);
     } catch (error: any) {
-      setIsDisabled(false);
-      setCreating(false);
-
       console.log(error.message);
       toast.error(
         "Something went wrong while creating your account. Please try again."
       );
+    } finally {
+      setIsDisabled(false);
+      setCreating(false);
     }
   };
 
