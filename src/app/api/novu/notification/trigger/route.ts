@@ -10,14 +10,8 @@ export async function POST(request: NextRequest) {
 
   try {
     const session = await auth();
-    const {
-      _id,
-      title,
-      firstDate,
-      secondDate,
-      thirdDate,
-      notification,
-    } = await request.json();
+    const { _id, title, firstDate, secondDate, thirdDate, notification } =
+      await request.json();
 
     if (!session) {
       return NextResponse.json(
@@ -39,15 +33,9 @@ export async function POST(request: NextRequest) {
           email: session.user.email,
           title: title,
           username: session.user.username,
-          firstSendAt: new Date(
-            new Date(firstDate).getTime() + 86400000
-          ).toISOString(),
-          secondSendAt: new Date(
-            new Date(secondDate).getTime() + 86400000
-          ).toISOString(),
-          thirdSendAt: new Date(
-            new Date(thirdDate).getTime() + 86400000
-          ).toISOString(),
+          firstSendAt: new Date(firstDate).toISOString(),
+          secondSendAt: new Date(secondDate).toISOString(),
+          thirdSendAt: new Date(thirdDate).toISOString(),
         },
       });
 
@@ -58,7 +46,6 @@ export async function POST(request: NextRequest) {
       response = await novu.events.cancel(note.novuTransactionId);
       note.novuTransactionId = "";
     }
-
 
     if (!response?.data?.data) {
       return NextResponse.json(
@@ -74,7 +61,6 @@ export async function POST(request: NextRequest) {
     note.notification = notification;
     await note.save();
 
-
     console.log(response.data);
 
     if (!notification) {
@@ -84,7 +70,12 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json(
-      new ApiResponse(true, 200, {}, `Notification switched on succesfully. You will be notified on particular dates to revise the topic.`)
+      new ApiResponse(
+        true,
+        200,
+        {},
+        `Notification switched on succesfully. You will be notified on particular dates to revise the topic.`
+      )
     );
   } catch (error: any) {
     console.error(`Error while sending notification : ERROR : ${error}`);
