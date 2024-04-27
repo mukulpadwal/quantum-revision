@@ -16,17 +16,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 
 const ScheduleTable = () => {
-  const [revisionData, setRevisionData] = useState<Array<RevisionData>>([
-    {
-      _id: "",
-      title: "",
-      entryDate: undefined,
-      firstDate: undefined,
-      secondDate: undefined,
-      thirdDate: undefined,
-      notification: false,
-    },
-  ]);
+  const [revisionData, setRevisionData] = useState<Array<RevisionData>>([]);
 
   useEffect(() => {
     (async () => {

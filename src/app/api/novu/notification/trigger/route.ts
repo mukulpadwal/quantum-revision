@@ -61,8 +61,6 @@ export async function POST(request: NextRequest) {
     note.notification = notification;
     await note.save();
 
-    console.log(response.data);
-
     if (!notification) {
       return NextResponse.json(
         new ApiResponse(true, 200, {}, `Notification switched off succesfully`)
