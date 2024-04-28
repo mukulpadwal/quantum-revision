@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import ThemeSwitcher from "./ThemeSwitcher";
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
@@ -23,40 +23,36 @@ import {
 
 export default function Navbar() {
   const { data: session } = useSession();
+
   const pathname = usePathname();
   const router = useRouter();
 
   const [isMobileMenuClicked, setIsMobileMenuClicked] =
     useState<boolean>(false);
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
 
   const handleUserLogout = async () => {
     try {
-      await signOut({ callbackUrl: "/" });
-      setIsLoggedIn(false);
+      await signOut({ redirect: false });
       toast.success("Successfully logged out...");
+      router.replace("/");
     } catch (error: any) {
       console.error(
         `Error while logging out the user : ERROR : ${error.message}`
       );
+    } finally {
+      setIsMobileMenuClicked((prev) => !prev);
     }
   };
-
-  useEffect(() => {
-    if (session) {
-      setIsLoggedIn(true);
-    }
-  }, [session]);
 
   return (
     <header>
       <nav className="md:border md:border-x-0 md:border-t-0 relative top-0 w-full h-full p-4 flex justify-between items-center">
         <div className="hidden md:flex md:justify-center md:items-center md:gap-x-6  md:order-1">
-          {!isLoggedIn ? (
+          {session ? (
             <Link
               href={"/"}
               className={`${
-                pathname === "/"
+                pathname === "/homepage"
                   ? "active underline underline-offset-4"
                   : "no-underline"
               }`}
@@ -67,7 +63,7 @@ export default function Navbar() {
             <Link
               href={"/"}
               className={`${
-                pathname === "/homepage"
+                pathname === "/"
                   ? "active underline underline-offset-4"
                   : "no-underline"
               }`}
@@ -119,7 +115,40 @@ export default function Navbar() {
         </div>
 
         <div className="order-3 flex flex-row justify-center items-center gap-x-4">
-          {!isLoggedIn ? (
+          {session ? (
+            <>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="border overflow-hidden rounded-full "
+                  >
+                    {String(session?.user?.username).charAt(0).toUpperCase()}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    className="cursor-pointer"
+                    onClick={() => router.replace("profile")}
+                  >
+                    Profile
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator className="hidden md:inline-block w-full" />
+                  <DropdownMenuItem>
+                    <Button
+                      onClick={handleUserLogout}
+                      className={`hidden md:inline-block w-full`}
+                    >
+                      Logout
+                    </Button>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </>
+          ) : (
             <>
               <Link
                 href={"/login"}
@@ -137,36 +166,6 @@ export default function Navbar() {
               >
                 SignUp
               </Link>
-            </>
-          ) : (
-            <>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="border overflow-hidden rounded-full "
-                  >
-                    {String(session?.user?.username).charAt(0).toUpperCase()}
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem className="cursor-pointer" onClick={() => router.push("/profile")}>
-                    Profile
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator className="hidden md:inline-block w-full" />
-                  <DropdownMenuItem>
-                    <Button
-                      onClick={handleUserLogout}
-                      className={`hidden md:inline-block w-full`}
-                    >
-                      Logout
-                    </Button>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
             </>
           )}
 
@@ -223,7 +222,14 @@ export default function Navbar() {
               >
                 Contact
               </Link>
-              {!isLoggedIn ? (
+              {session ? (
+                <Button
+                  onClick={handleUserLogout}
+                  className="block w-auto relative m-4"
+                >
+                  Logout
+                </Button>
+              ) : (
                 <>
                   <Link
                     href={"/login"}
@@ -240,13 +246,6 @@ export default function Navbar() {
                     SignUp
                   </Link>
                 </>
-              ) : (
-                <Button
-                  onClick={handleUserLogout}
-                  className="block w-auto relative m-4"
-                >
-                  Logout
-                </Button>
               )}
             </div>
           )}
