@@ -105,7 +105,7 @@ export default function Navbar() {
         <div className="flex order-2">
           <Link href={"/"}>
             <Image
-              src={"/images/three.jpeg"}
+              src={"/images/logo.jpeg"}
               height={50}
               width={50}
               alt="Quantum Revision Logo"

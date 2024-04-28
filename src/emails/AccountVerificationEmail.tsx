@@ -47,7 +47,7 @@ export const AccountVerificationEmail = ({
         </Text>
 
         <Img
-          src="https://github.com/mukulpadwal/quantum-revision/raw/main/public/images/three.jpeg"
+          src="https://github.com/mukulpadwal/quantum-revision/raw/main/public/images/logo.jpeg"
           width="32"
           height="32"
           alt="Quantum Revision Logo"

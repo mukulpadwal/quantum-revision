@@ -8,7 +8,7 @@ export default function LandingPage() {
       <div className="flex flex-col justify-center items-center md:flex-row md:justify-evenly md:items-center w-full h-auto md:h-screen p-2 md:p-8">
         <div className="w-full h-auto md:h-full m-4 flex justify-center md:justify-center md:items-center">
           <Image
-            src={"/images/three.jpeg"}
+            src={"/images/logo.jpeg"}
             height={300}
             width={300}
             alt="Quantum Revision Logo"
