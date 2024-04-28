@@ -5,15 +5,17 @@ import Note from "@/models/notes.model";
 import User from "@/models/user.model";
 import { NextRequest, NextResponse } from "next/server";
 
-
-export async function DELETE(request: NextRequest) {
+export async function DELETE(
+    request: NextRequest,
+    { params }: { params: { noteId: string } }
+) {
+    const { noteId } = params;
     await connectToDB();
 
     try {
         const session = await auth();
-        const { noteId } = await request.json();
 
-        if (!session) {
+        if (!session || !session.user) {
             return NextResponse.json(
                 new ApiResponse(false, 400, {}, "Unauthorized Request!")
             );

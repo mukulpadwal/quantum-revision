@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -14,9 +14,12 @@ import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { Loader2 } from "lucide-react";
 
 const ScheduleTable = () => {
   const [revisionData, setRevisionData] = useState<Array<RevisionData>>([]);
+  const [isDeleting, setIsDeleting] = useState<boolean>(false);
+  const [isDeletingId, setIsDeletingId] = useState<string>("");
 
   useEffect(() => {
     (async () => {
@@ -35,22 +38,24 @@ const ScheduleTable = () => {
     })();
   }, []);
 
-  const handleDeleteEntry = async (noteId: string | undefined) => {
+  const handleDeleteEntry = async (noteId: string) => {
+    setIsDeletingId(noteId);
+    setIsDeleting(true);
+
     try {
-      const response = await axios.delete("/api/notes/delete", {
-        data: JSON.stringify({ noteId }),
-      });
+      const response = await axios.delete(`/api/notes/delete/${noteId}`);
 
       if (response.data.success) {
         toast.success(response.data.message);
-        setTimeout(() => {
-          window.location.reload();
-        }, 500);
       } else {
         toast.error(response.data.message);
       }
     } catch (error: any) {
       console.error(`Some error occured while deleting entry.`);
+    } finally {
+      setIsDeletingId("");
+      setIsDeleting(false);
+      setRevisionData(revisionData.filter((data) => data._id !== noteId));
     }
   };
 
@@ -117,8 +122,17 @@ const ScheduleTable = () => {
               />
             </TableCell>
             <TableCell className="border text-center">
-              <Button onClick={() => handleDeleteEntry(data._id)}>
-                Delete
+              <Button
+                onClick={() => handleDeleteEntry(data._id || "")}
+                disabled={isDeleting}
+              >
+                {isDeleting && isDeletingId === data._id ? (
+                  <>
+                    <Loader2 className="mr-1 h-4 w-4" /> Deleting...
+                  </>
+                ) : (
+                  <>Delete</>
+                )}
               </Button>
             </TableCell>
           </TableRow>
