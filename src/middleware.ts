@@ -5,9 +5,12 @@ export async function middleware(request: NextRequest) {
 
   const path = request.nextUrl.pathname;
 
+  console.log(path);
+
+
   // If the user is not logged in
   if (!session) {
-    if (path === "/homepage" || path === "/profile") {
+    if (path === "/homepage" || path === "/myaccount/profile" || path === "/myaccount/delete" || path === "/myaccount/changepassword") {
       return NextResponse.redirect(new URL("/login", request.nextUrl));
     }
   }
@@ -24,5 +27,5 @@ export async function middleware(request: NextRequest) {
 
 // Always run middleware logic on these routes
 export const config = {
-  matcher: ["/", "/login", "/signup", "/homepage", "/profile"],
+  matcher: ["/", "/login", "/signup", "/homepage", "/myaccount/:path*"],
 };
