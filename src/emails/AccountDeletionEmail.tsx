@@ -12,51 +12,35 @@ import {
 } from "@react-email/components";
 import * as React from "react";
 
-interface PasswordResetEmailProps {
+interface AccountDeletionEmailProps {
   username?: string;
-  changePasswordLink?: string;
 }
 
-export const PasswordResetEmail = ({
+export const AccountDeletionEmail = ({
   username,
-  changePasswordLink,
-}: PasswordResetEmailProps) => (
+}: AccountDeletionEmailProps) => (
   <Html>
     <Head />
-    <Preview>Hi {username!}, Reset Your Password</Preview>
+    <Preview>
+      Hi {username!}, Your account has been deleted successfully!!!
+    </Preview>
+
     <Body style={main}>
       <Container style={container}>
         <Heading style={h1}>Hi, {username}</Heading>
-        <Heading style={h2}>Reset Your Password</Heading>
-        <Link
-          href={changePasswordLink}
-          target="_blank"
-          style={{
-            ...link,
-            display: "block",
-            marginBottom: "16px",
-          }}
-        >
-          Click here to reset your account Password
-        </Link>
-        <Text style={{ ...text, marginBottom: "14px" }}>
-          Or, copy and paste this temporary password reset link:
-        </Text>
-        <code style={code}>{changePasswordLink}</code>
 
         <Text style={text}>
-          This link is&apos; only valid for 24 hours from the time of issuance.
+          We wanted to inform you that your account with us has been
+          successfully deleted as per your request.
         </Text>
 
-        <Text
-          style={{
-            ...text,
-            color: "#ababab",
-            marginTop: "14px",
-            marginBottom: "16px",
-          }}
-        >
-          If you didn&apos;t try to change your password, you can safely ignore this email.
+        <Text style={text}>
+          We appreciate the time you&apos;ve spent with us and want to extend
+          our sincere thanks for your support.
+        </Text>
+        <Text style={text}>
+          If you have any questions or need further assistance, feel free to
+          contact us.
         </Text>
 
         <Img
@@ -81,7 +65,7 @@ export const PasswordResetEmail = ({
   </Html>
 );
 
-export default PasswordResetEmail;
+export default AccountDeletionEmail;
 
 const main = {
   backgroundColor: "#ffffff",
@@ -139,12 +123,15 @@ const footer = {
   marginBottom: "24px",
 };
 
-const code = {
-  display: "inline-block",
-  padding: "16px 4.5%",
-  width: "90.5%",
-  backgroundColor: "#f4f4f4",
-  borderRadius: "5px",
-  border: "1px solid #eee",
-  color: "#333",
+const codeBox = {
+  background: "rgb(245, 244, 245)",
+  borderRadius: "4px",
+  marginBottom: "30px",
+  padding: "40px 10px",
+};
+
+const confirmationCodeText = {
+  fontSize: "30px",
+  textAlign: "center" as const,
+  verticalAlign: "middle",
 };

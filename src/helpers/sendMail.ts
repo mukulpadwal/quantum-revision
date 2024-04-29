@@ -1,5 +1,6 @@
 import AccountVerificationEmail from "@/emails/AccountVerificationEmail";
 import PasswordResetEmail from "@/emails/PasswordResetEmail";
+import AccountDeletionEmail from "@/emails/AccountDeletionEmail";
 import ApiResponse from "./ApiResponse";
 import jwt from "jsonwebtoken";
 import conf from "@/conf/conf";
@@ -7,7 +8,7 @@ import User from "@/models/user.model";
 import { Resend } from "resend";
 import generateOTP from "./generateOTP";
 
-export default async function sendVerificationEmail(
+export default async function sendMail(
     email: string,
     emailType: string,
     username: string,
@@ -36,24 +37,38 @@ export default async function sendVerificationEmail(
             });
         }
 
-        await resend.emails.send({
-            from: "onboarding@resend.dev",
-            to: email,
-            subject:
-                emailType === "VERIFY"
-                    ? "Quantum Revision | Account Verification"
-                    : "Quantum Revision | Password Reset",
-            react:
-                emailType === "VERIFY"
-                    ? AccountVerificationEmail({ username, otp })
-                    : PasswordResetEmail({ username, changePasswordLink }),
-        });
+        if (emailType === "DELETE") {
+            await resend.emails.send({
+                from: "onboarding@resend.dev",
+                to: email,
+                subject: "Quantum Revision | Account Deletion",
+                react: AccountDeletionEmail({ username }),
+            });
+        }
+
+        if (emailType === "VERIFY") {
+            await resend.emails.send({
+                from: "onboarding@resend.dev",
+                to: email,
+                subject: "Quantum Revision | Account Verification",
+                react: AccountVerificationEmail({ username, otp }),
+            });
+        }
+
+        if (emailType === "RESET") {
+            await resend.emails.send({
+                from: "onboarding@resend.dev",
+                to: email,
+                subject: "Quantum Revision | Password Reset",
+                react: PasswordResetEmail({ username, changePasswordLink }),
+            });
+        }
 
         return new ApiResponse(
             true,
             200,
             {},
-            "Account verificationemail sent successfully."
+            "Email sent successfully."
         );
     } catch (emailError: any) {
         console.error(

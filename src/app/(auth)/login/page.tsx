@@ -52,7 +52,7 @@ export default function LoginPage() {
           }
 
           if (response.url) {
-            toast.success("LogIn Success.");
+            toast.success("Log in Success...");
 
             router.replace("/homepage");
           }

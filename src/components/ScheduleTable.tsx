@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -46,6 +46,7 @@ const ScheduleTable = () => {
       const response = await axios.delete(`/api/notes/delete/${noteId}`);
 
       if (response.data.success) {
+        setRevisionData(revisionData.filter((data) => data._id !== noteId));
         toast.success(response.data.message);
       } else {
         toast.error(response.data.message);
@@ -55,7 +56,6 @@ const ScheduleTable = () => {
     } finally {
       setIsDeletingId("");
       setIsDeleting(false);
-      setRevisionData(revisionData.filter((data) => data._id !== noteId));
     }
   };
 

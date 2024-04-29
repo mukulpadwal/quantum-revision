@@ -12,14 +12,6 @@ import { signOut } from "next-auth/react";
 import { useSession } from "next-auth/react";
 import toast from "react-hot-toast";
 import { usePathname, useRouter } from "next/navigation";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 
 export default function Navbar() {
   const { data: session } = useSession();
@@ -117,36 +109,20 @@ export default function Navbar() {
         <div className="order-3 flex flex-row justify-center items-center gap-x-4">
           {session ? (
             <>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="border overflow-hidden rounded-full "
-                  >
-                    {String(session?.user?.username).charAt(0).toUpperCase()}
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem
-                    className="cursor-pointer"
-                    onClick={() => router.replace("profile")}
-                  >
-                    Profile
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator className="hidden md:inline-block w-full" />
-                  <DropdownMenuItem>
-                    <Button
-                      onClick={handleUserLogout}
-                      className={`hidden md:inline-block w-full`}
-                    >
-                      Logout
-                    </Button>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <Button
+                variant="outline"
+                size="icon"
+                className="border overflow-hidden rounded-full "
+                onClick={() => router.replace("/myaccount/profile")}
+              >
+                {String(session?.user?.username).charAt(0).toUpperCase()}
+              </Button>
+              <Button
+                onClick={handleUserLogout}
+                className={`hidden md:inline-block`}
+              >
+                Logout
+              </Button>
             </>
           ) : (
             <>

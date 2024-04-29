@@ -24,22 +24,13 @@ interface ResetPasswordFormData {
 }
 
 export default function ChangePasswordPage() {
-  const router = useRouter();
   const queryParams = useSearchParams();
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
-  const [token, setToken] = useState<string>("");
   const [formData, setFormData] = useState<ResetPasswordFormData>({
     oldPassword: "",
     newPassword: "",
     confirmNewPassword: "",
   });
-
-  useEffect(() => {
-    const token = queryParams.get("token")?.valueOf() || "";
-    if (token) {
-      setToken(token);
-    }
-  }, [queryParams]);
 
   const handleChangePassword = async () => {
     try {
@@ -52,14 +43,10 @@ export default function ChangePasswordPage() {
         if (formData.newPassword === formData.confirmNewPassword) {
           const response = await axios.post("/api/users/changepassword", {
             ...formData,
-            token: token,
           });
 
           if (response.data.success) {
             toast.success(response.data.message);
-            setTimeout(() => {
-              router.push("/login");
-            }, 1500);
           } else {
             toast.error(response.data.message);
           }
@@ -78,7 +65,7 @@ export default function ChangePasswordPage() {
     }
   };
   return (
-    <Card className="mx-auto max-w-sm">
+    <Card>
       <CardHeader>
         <CardTitle className="text-2xl">Change Password</CardTitle>
         <CardDescription className="w-full">

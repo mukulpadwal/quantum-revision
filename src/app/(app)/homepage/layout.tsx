@@ -11,7 +11,7 @@ export default function HomePageLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <main className="relative flex  justify-center items-start min-w-screen min-h-screen p-2 md:p-8">
+    <main className="relative flex justify-center items-start min-w-screen min-h-screen p-2 md:p-8">
       {children}
     </main>
   );
