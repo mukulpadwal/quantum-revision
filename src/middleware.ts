@@ -5,9 +5,6 @@ export async function middleware(request: NextRequest) {
 
   const path = request.nextUrl.pathname;
 
-  console.log(path);
-
-
   // If the user is not logged in
   if (!session) {
     if (path === "/homepage" || path === "/myaccount/profile" || path === "/myaccount/delete" || path === "/myaccount/changepassword") {
