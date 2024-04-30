@@ -11,7 +11,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { MdOutlineLockReset } from "react-icons/md";
 import toast from "react-hot-toast";
 import axios from "axios";
@@ -23,23 +23,17 @@ interface ResetPasswordFormData {
   confirmNewPassword: string;
 }
 
-export default function ChangePasswordPage() {
+function ChangePassword() {
   const router = useRouter();
   const queryParams = useSearchParams();
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
-  const [token, setToken] = useState<string>("");
   const [formData, setFormData] = useState<ResetPasswordFormData>({
     oldPassword: "",
     newPassword: "",
     confirmNewPassword: "",
   });
 
-  useEffect(() => {
-    const token = queryParams.get("token")?.valueOf() || "";
-    if (token) {
-      setToken(token);
-    }
-  }, [queryParams]);
+  const token = queryParams.get("token") || "";
 
   const handleChangePassword = async () => {
     try {
@@ -77,6 +71,7 @@ export default function ChangePasswordPage() {
       );
     }
   };
+
   return (
     <Card className="mx-auto max-w-sm">
       <CardHeader>
@@ -147,5 +142,13 @@ export default function ChangePasswordPage() {
         </div>
       </CardContent>
     </Card>
+  );
+}
+
+export default function ChangePasswordPage() {
+  return (
+    <Suspense>
+      <ChangePassword />
+    </Suspense>
   );
 }
