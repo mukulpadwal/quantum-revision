@@ -19,7 +19,7 @@ function AboutPage() {
           retention and comprehension during study sessions.
         </p>
       </div>
-      <ul className="list-disc m-2 sm:m-8 p-2">
+      <ul className="m-2 sm:m-8 p-2">
         <li className="underline underline-offset-4 font-bold mb-2">
           What is the 1247 Technique?
         </li>
@@ -32,48 +32,65 @@ function AboutPage() {
           <br />
           <ol className="px-4 my-2 list-decimal list-inside">
             <li>
-              <span className="font-semibold">Initial Study (Day 1):</span> Dive
-              into the material for the first time.
+              <span className="font-semibold underline underline-offset-4">
+                Initial Study (Day 1)
+              </span>{" "}
+              : Dive into the material for the first time.
             </li>
             <li>
-              <span className="font-semibold">First Revision (Day 2):</span>{" "}
-              Reinforce your understanding within 24 hours of the initial study.
+              <span className="font-semibold underline underline-offset-4">
+                First Revision (Day 2)
+              </span>{" "}
+              : Reinforce your understanding within 24 hours of the initial
+              study.
             </li>
             <li>
-              <span className="font-semibold">Second Revision (Day 4):</span>{" "}
-              Review the material again, building upon your previous knowledge.
+              <span className="font-semibold underline underline-offset-4">
+                Second Revision (Day 4)
+              </span>{" "}
+              : Review the material again, building upon your previous
+              knowledge.
             </li>
             <li>
-              <span className="font-semibold">Final Revision (Day 7):</span>{" "}
-              Cement your grasp of the concepts with a final comprehensive
+              <span className="font-semibold underline underline-offset-4">
+                Final Revision (Day 7)
+              </span>{" "}
+              : Cement your grasp of the concepts with a final comprehensive
               review.
             </li>
           </ol>
         </li>
       </ul>
-      <ul className="list-disc m-2 sm:m-8 p-2">
+      <ul className="m-2 sm:m-8 p-2 ">
         <li className="underline underline-offset-4 font-bold mb-2">
           Why Choose the 1247 Technique?
         </li>
-        <li>
-          Efficiency: By focusing on targeted revision sessions, you optimize
-          your study time, spending less time overall while achieving better
-          results. Retention: Through repeated exposure, the concepts move from
-          short-term to long-term memory, ensuring a deeper understanding and
-          lasting retention. Confidence: With enhanced recall abilities,
-          you&apos;ll approach exams and assignments with confidence, knowing
-          you&apos;ve mastered the material thoroughly. Experience the
-          Difference
-        </li>
-      </ul>
-      <ul className="list-disc m-2 sm:m-8 p-2">
-        <li className="underline underline-offset-4 font-bold mb-2">
-          Experience the Difference
-        </li>
-        <li>
-          Say goodbye to last-minute cramming and hello to effective,
-          stress-free studying with Quantum Revision.
-        </li>
+        <ul className="list-inside list-disc">
+          <li>
+            <span className="underline underline-offset-4">Efficiency</span> :{" "}
+            By focusing on targeted revision sessions, you optimize your study
+            time, spending less time overall while achieving better results.
+          </li>
+          <li>
+            <span className="underline underline-offset-4">Retention</span> :{" "}
+            Through repeated exposure, the concepts move from short-term to
+            long-term memory, ensuring a deeper understanding and lasting
+            retention.
+          </li>
+          <li>
+            <span className="underline underline-offset-4">Confidence</span> :{" "}
+            With enhanced recall abilities, you&apos;ll approach exams and
+            assignments with confidence, knowing you&apos;ve mastered the
+            material thoroughly.
+          </li>
+          <li>
+            <span className="underline underline-offset-4">
+              Experience the Difference
+            </span>{" "}
+            : Say goodbye to last-minute cramming and hello to effective,
+            stress-free studying with Quantum Revision.
+          </li>
+        </ul>
       </ul>
     </div>
   );
