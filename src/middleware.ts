@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import conf from "./conf/conf";
 
+
 export async function middleware(request: NextRequest) {
-  const session =
-    request.cookies.get(conf.sessionTokenName || conf.secureSessionTokenName)
-      ?.value || "";
+  const session = request.cookies.get(conf.sessionTokenName || conf.secureSessionTokenName)?.value || null;
+
+  console.log(session);
 
   const path = request.nextUrl.pathname;
 

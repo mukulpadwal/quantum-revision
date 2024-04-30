@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -16,7 +16,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { Loader2 } from "lucide-react";
 
-const ScheduleTable = () => {
+async function Schedule() {
   const [revisionData, setRevisionData] = useState<Array<RevisionData>>([]);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
   const [isDeletingId, setIsDeletingId] = useState<string>("");
@@ -140,6 +140,12 @@ const ScheduleTable = () => {
       </TableBody>
     </Table>
   );
-};
+}
 
-export default ScheduleTable;
+export default function ScheduleTable() {
+  return (
+    <Suspense fallback={"Loading Data..."}>
+      <Schedule />
+    </Suspense>
+  );
+}
