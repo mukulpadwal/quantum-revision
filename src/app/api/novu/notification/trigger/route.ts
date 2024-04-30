@@ -29,10 +29,12 @@ export async function POST(request: NextRequest) {
           subscriberId: session.user._id,
         },
         payload: {
-          subject: `📚 Quantum Revision Reminder: ${title}🚀`,
           email: session.user.email,
           title: title,
           username: session.user.username,
+          firstDate: new Date(firstDate).toDateString(),
+          secondDate: new Date(secondDate).toDateString(),
+          thirdDate: new Date(thirdDate).toDateString(),
           firstSendAt: new Date(firstDate).toISOString(),
           secondSendAt: new Date(secondDate).toISOString(),
           thirdSendAt: new Date(thirdDate).toISOString(),
@@ -46,6 +48,8 @@ export async function POST(request: NextRequest) {
       response = await novu.events.cancel(note.novuTransactionId);
       note.novuTransactionId = "";
     }
+
+    console.log(response.data);
 
     if (!response?.data?.data) {
       return NextResponse.json(
