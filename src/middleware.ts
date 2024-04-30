@@ -26,8 +26,6 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL("/homepage", request.nextUrl));
     }
   }
-
-  return NextResponse.next();
 }
 
 // Always run middleware logic on these routes
