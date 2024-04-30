@@ -17,7 +17,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useSession } from "next-auth/react";
-import { Edit2, Loader2 } from "lucide-react";
+import { Ban, Edit2, Loader2 } from "lucide-react";
 import { UpdateIcon } from "@radix-ui/react-icons";
 
 const profileFormSchema = z.object({
@@ -166,19 +166,30 @@ export default function ProfilePage() {
             <Edit2 className="h-4 w-4 mr-2" /> Edit profile
           </Button>
         ) : (
-          <Button type="submit">
-            {!isUpdating ? (
-              <>
-                <UpdateIcon className="h-4 w-4 mr-2" />
-                Update profile
-              </>
-            ) : (
-              <>
-                <Loader2 className="h-4 w-4 mr-2" />
-                Updating...
-              </>
-            )}
-          </Button>
+          <div className="flex flex-row items-center  space-x-4">
+            <Button type="submit">
+              {!isUpdating ? (
+                <>
+                  <UpdateIcon className="h-4 w-4 mr-2" />
+                  Update profile
+                </>
+              ) : (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2" />
+                  Updating...
+                </>
+              )}
+            </Button>
+            <Button
+              variant={"destructive"}
+              onClick={() => {
+                setIsDisabled(true);
+              }}
+            >
+              <Ban className="h-4 w-4 mr-2" />
+              Cancel
+            </Button>
+          </div>
         )}
       </form>
     </Form>
