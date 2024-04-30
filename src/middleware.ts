@@ -5,7 +5,7 @@ export async function middleware(request: NextRequest) {
   const sessionToken =
     request.cookies.get("authjs.session-token")?.value || null;
   const secureSessionToken =
-    request.cookies.get("__Secure-authjs.session-token") || null;
+    request.cookies.get("__Secure-authjs.session-token")?.value || null;
 
 
 
