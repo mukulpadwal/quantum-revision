@@ -3,14 +3,16 @@ import conf from "./conf/conf";
 
 
 export async function middleware(request: NextRequest) {
-  const session = request.cookies.get(conf.sessionTokenName || conf.secureSessionTokenName)?.value || null;
+  const sessionToken = request.cookies.get(conf.sessionTokenName || conf.secureSessionTokenName)?.value || null;
 
-  console.log(session);
+  console.log(`COOKIES : ${request.cookies.getAll()}`);
+
+  console.log(`Session Token : ${sessionToken}`);
 
   const path = request.nextUrl.pathname;
 
   // If the user is not logged in
-  if (!session) {
+  if (!sessionToken) {
     if (
       path === "/homepage" ||
       path === "/myaccount/profile" ||
@@ -22,7 +24,7 @@ export async function middleware(request: NextRequest) {
   }
 
   // If the user is logged in
-  if (session) {
+  if (sessionToken) {
     if (path === "/" || path === "/login" || path === "/signup") {
       return NextResponse.redirect(new URL("/homepage", request.nextUrl));
     }
