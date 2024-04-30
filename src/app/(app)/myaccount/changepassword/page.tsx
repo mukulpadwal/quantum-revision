@@ -10,12 +10,10 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { MdOutlineLockReset } from "react-icons/md";
 import toast from "react-hot-toast";
 import axios from "axios";
-import { useRouter } from "next/navigation";
 
 interface ResetPasswordFormData {
   oldPassword: string;
@@ -24,7 +22,6 @@ interface ResetPasswordFormData {
 }
 
 export default function ChangePasswordPage() {
-  const queryParams = useSearchParams();
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
   const [formData, setFormData] = useState<ResetPasswordFormData>({
     oldPassword: "",
@@ -62,77 +59,85 @@ export default function ChangePasswordPage() {
       console.log(
         `Some error occured while resetting your password : ERROR : ${error.message}`
       );
+    } finally {
+      setFormData({
+        oldPassword: "",
+        newPassword: "",
+        confirmNewPassword: "",
+      });
     }
   };
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="text-2xl">Change Password</CardTitle>
-        <CardDescription className="w-full">
-          Please enter your old and new passwords to complete the password
-          change process.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="grid gap-4">
-          <div className="grid gap-2">
-            <Label htmlFor="old-password">Old Password</Label>
-            <Input
-              id="old-password"
-              type="password"
-              name="old-password"
-              placeholder="********"
-              value={formData.oldPassword}
-              onChange={(e) =>
-                setFormData({ ...formData, oldPassword: e.target.value })
-              }
-              required
-            />
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="new-password">New Password</Label>
+    <>
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-2xl">Change Password</CardTitle>
+          <CardDescription className="w-full">
+            Please enter your old and new passwords to complete the password
+            change process.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-4">
+            <div className="grid gap-2">
+              <Label htmlFor="old-password">Old Password</Label>
+              <Input
+                id="old-password"
+                type="password"
+                name="old-password"
+                placeholder="********"
+                value={formData.oldPassword}
+                onChange={(e) =>
+                  setFormData({ ...formData, oldPassword: e.target.value })
+                }
+                required
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="new-password">New Password</Label>
 
-            <Input
-              id="new-password"
-              type="password"
-              name="new-password"
-              placeholder="********"
-              value={formData.newPassword}
-              onChange={(e) =>
-                setFormData({ ...formData, newPassword: e.target.value })
-              }
-              required
-            />
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="confirm-new-password">Confirm New Password</Label>
+              <Input
+                id="new-password"
+                type="password"
+                name="new-password"
+                placeholder="********"
+                value={formData.newPassword}
+                onChange={(e) =>
+                  setFormData({ ...formData, newPassword: e.target.value })
+                }
+                required
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="confirm-new-password">Confirm New Password</Label>
 
-            <Input
-              id="confirm-new-password"
-              type="password"
-              name="confirm-new-password"
-              placeholder="********"
-              value={formData.confirmNewPassword}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  confirmNewPassword: e.target.value,
-                })
-              }
-              required
-            />
+              <Input
+                id="confirm-new-password"
+                type="password"
+                name="confirm-new-password"
+                placeholder="********"
+                value={formData.confirmNewPassword}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    confirmNewPassword: e.target.value,
+                  })
+                }
+                required
+              />
+            </div>
+            <Button
+              type="submit"
+              className="w-full flex flex-row items-center justify-center gap-x-2"
+              disabled={isDisabled}
+              onClick={handleChangePassword}
+            >
+              <MdOutlineLockReset className="w-5 h-5" />
+              Change Password
+            </Button>
           </div>
-          <Button
-            type="submit"
-            className="w-full flex flex-row items-center justify-center gap-x-2"
-            disabled={isDisabled}
-            onClick={handleChangePassword}
-          >
-            <MdOutlineLockReset className="w-5 h-5" />
-            Change Password
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    </>
   );
 }

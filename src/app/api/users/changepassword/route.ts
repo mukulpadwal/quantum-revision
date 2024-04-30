@@ -6,45 +6,69 @@ import conf from "@/conf/conf";
 import User from "@/models/user.model";
 import bcrypt from "bcryptjs";
 import validatePassword from "@/helpers/validatePassword";
-
+import { auth } from "@/auth";
 
 export async function POST(request: NextRequest) {
     await connectToDB();
+    const session = await auth();
+
     try {
-        const formData = await request.json();
-        const { oldPassword, newPassword, confirmNewPassword, token } = formData;
+        const { oldPassword, newPassword, confirmNewPassword, token } =
+            await request.json();
 
-        const decodedToken: any = jwt.verify(token, conf.tokenSecret);
+        let user = null;
 
-        const user = await User.findById(decodedToken._id);
+        if (token) {
+            const decodedToken: any = jwt.verify(token, conf.tokenSecret);
+            user = await User.findById(decodedToken._id);
+        } else if (session) {
+            user = await User.findById(session.user._id);
+        }
+        
 
         if (!user) {
-            return NextResponse.json(new ApiResponse(false, 400, {}, "Unauthorized Request."))
-
+            return NextResponse.json(
+                new ApiResponse(false, 400, {}, "Unauthorized Request.")
+            );
         }
 
-        if (user.resetPasswordToken !== token) {
-            return NextResponse.json(new ApiResponse(false, 400, {}, "Unauthorized Request."))
-        } else if (Date.now() > user.resetPasswordTokenExpiry) {
-            return NextResponse.json(new ApiResponse(false, 400, {}, "Token Expired."))
+        if (token) {
+            if (user.resetPasswordToken !== token) {
+                return NextResponse.json(
+                    new ApiResponse(false, 400, {}, "Unauthorized Request.")
+                );
+            } else if (Date.now() > user.resetPasswordTokenExpiry) {
+                return NextResponse.json(
+                    new ApiResponse(false, 400, {}, "Token Expired.")
+                );
+            }
         }
 
         const isCorrectPassword = await bcrypt.compare(oldPassword, user.password);
 
         if (!isCorrectPassword) {
-            return NextResponse.json(new ApiResponse(false, 400, {}, "Invalid Old Password."))
+            return NextResponse.json(
+                new ApiResponse(false, 400, {}, "Invalid Old Password.")
+            );
         }
-
-
 
         const isNewPasswordCorrect = validatePassword(newPassword);
 
         if (!isNewPasswordCorrect) {
-            return NextResponse.json(new ApiResponse(false, 400, {}, "Oops! It seems your password doesn't meet the minimum requirements. Please ensure your password contains at least one capital letter, one number, one special character, and is longer than 8 characters for enhanced security."))
+            return NextResponse.json(
+                new ApiResponse(
+                    false,
+                    400,
+                    {},
+                    "Oops! It seems your password doesn't meet the minimum requirements. Please ensure your password contains at least one capital letter, one number, one special character, and is longer than 8 characters for enhanced security."
+                )
+            );
         }
 
         if (newPassword !== confirmNewPassword) {
-            return NextResponse.json(new ApiResponse(false, 400, {}, "Passwords mismatch."))
+            return NextResponse.json(
+                new ApiResponse(false, 400, {}, "Passwords mismatch.")
+            );
         }
 
         const salt = await bcrypt.genSalt(10);
@@ -55,9 +79,12 @@ export async function POST(request: NextRequest) {
         user.resetPasswordTokenExpiry = undefined;
         await user.save();
 
-        return NextResponse.json(new ApiResponse(true, 200, user, "Password changed successfully."))
-
+        return NextResponse.json(
+            new ApiResponse(true, 200, user, "Password changed successfully.")
+        );
     } catch (error: any) {
-        return NextResponse.json(new ApiResponse(false, 500, {}, "Internal Server Error."))
+        return NextResponse.json(
+            new ApiResponse(false, 500, {}, "Internal Server Error.")
+        );
     }
 }
