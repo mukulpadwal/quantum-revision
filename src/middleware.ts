@@ -3,17 +3,11 @@ import conf from "./conf/conf";
 
 export async function middleware(request: NextRequest) {
   const sessionToken =
-    request.cookies.get(conf.sessionTokenName)?.value || null;
+    request.cookies.get("authjs.session-token")?.value || null;
   const secureSessionToken =
-    request.cookies.get(conf.secureSessionTokenName)?.value || null;
+    request.cookies.get("__Secure-authjs.session-token") || null;
 
-  console.log(
-    `Session Token : ${request.cookies.get("authjs.session-token")?.value}`
-  );
-  console.log(
-    `SECURE TOKEN : ${request.cookies.get("__Secure-authjs.session-token")?.value
-    }`
-  );
+
 
   const path = request.nextUrl.pathname;
 
