@@ -1,13 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
+import conf from "./conf/conf";
 
 export async function middleware(request: NextRequest) {
-  const session = request.cookies.get("authjs.session-token")?.value || "";
+  const session =
+    request.cookies.get(conf.sessionTokenName || conf.secureSessionTokenName)
+      ?.value || "";
 
   const path = request.nextUrl.pathname;
 
   // If the user is not logged in
   if (!session) {
-    if (path === "/homepage" || path === "/myaccount/profile" || path === "/myaccount/delete" || path === "/myaccount/changepassword") {
+    if (
+      path === "/homepage" ||
+      path === "/myaccount/profile" ||
+      path === "/myaccount/delete" ||
+      path === "/myaccount/changepassword"
+    ) {
       return NextResponse.redirect(new URL("/login", request.nextUrl));
     }
   }
