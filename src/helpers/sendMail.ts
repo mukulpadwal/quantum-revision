@@ -5,7 +5,8 @@ import ApiResponse from "./ApiResponse";
 import jwt from "jsonwebtoken";
 import conf from "@/conf/conf";
 import User from "@/models/user.model";
-import { Resend } from "resend";
+import Plunk from '@plunk/node';
+import { render } from '@react-email/render';
 import generateOTP from "./generateOTP";
 
 export default async function sendMail(
@@ -15,7 +16,7 @@ export default async function sendMail(
     userId: string
 ) {
     try {
-        const resend = new Resend(conf.resendApiKey);
+        const plunk = new Plunk(conf.plunkSecretKey);
         const token = jwt.sign({ _id: userId }, conf.tokenSecret);
 
         const otp = generateOTP();
@@ -38,29 +39,26 @@ export default async function sendMail(
         }
 
         if (emailType === "DELETE") {
-            await resend.emails.send({
-                from: "onboarding@resend.dev",
+            await plunk.emails.send({
                 to: email,
                 subject: "Quantum Revision | Account Deletion",
-                react: AccountDeletionEmail({ username }),
+                body: render(AccountDeletionEmail({ username })),
             });
         }
 
         if (emailType === "VERIFY") {
-            await resend.emails.send({
-                from: "onboarding@resend.dev",
+            await plunk.emails.send({
                 to: email,
                 subject: "Quantum Revision | Account Verification",
-                react: AccountVerificationEmail({ username, otp }),
+                body: render(AccountVerificationEmail({ username, otp })),
             });
         }
 
         if (emailType === "RESET") {
-            await resend.emails.send({
-                from: "onboarding@resend.dev",
+            await plunk.emails.send({
                 to: email,
                 subject: "Quantum Revision | Password Reset",
-                react: PasswordResetEmail({ username, changePasswordLink }),
+                body: render(PasswordResetEmail({ username, changePasswordLink })),
             });
         }
 

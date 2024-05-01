@@ -9,7 +9,8 @@ const conf = {
     sessionTokenName: String(process.env.NEXT_AUTH_SESSION_TOKEN_NAME),
     secureSessionTokenName: String(process.env.NEXT_AUTH_SECURE_SESSION_TOKEN_NAME),
     googleAuthId: String(process.env.AUTH_GOOGLE_ID),
-    googleAuthSecret: String(process.env.AUTH_GOOGLE_SECRET)
+    googleAuthSecret: String(process.env.AUTH_GOOGLE_SECRET),
+    plunkSecretKey: String(process.env.PLUNK_SECRET_KEY)
 }
 
 export default conf;

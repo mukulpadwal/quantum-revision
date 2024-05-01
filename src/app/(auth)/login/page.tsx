@@ -126,7 +126,11 @@ export default function LoginPage() {
           >
             <MdLogin className="h-5 w-5" /> Login
           </Button>
-          <hr className="my-1" />
+          <div className="my-1 flex flex-row items-center justify-center gap-x-2">
+            <hr className="w-1/4" />
+            Or Continue With
+            <hr className="w-1/4" />
+          </div>
           <Button
             variant="outline"
             className="w-full flex flex-row items-center justify-center gap-x-2"
@@ -134,7 +138,7 @@ export default function LoginPage() {
             disabled={isDisabled}
           >
             <FaGoogle className="h-4 w-4" />
-            Login with Google
+            Sign in with Google
           </Button>
         </div>
         <div className="mt-4 text-center text-sm">
