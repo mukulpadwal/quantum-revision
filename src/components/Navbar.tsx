@@ -24,9 +24,8 @@ export default function Navbar() {
 
   const handleUserLogout = async () => {
     try {
-      await signOut({ redirect: false });
+      await signOut({ callbackUrl: "/" });
       toast.success("Successfully logged out...");
-      router.replace("/");
     } catch (error: any) {
       console.error(
         `Error while logging out the user : ERROR : ${error.message}`
