@@ -130,6 +130,7 @@ export default function LoginPage() {
           <Button
             variant="outline"
             className="w-full flex flex-row items-center justify-center gap-x-2"
+            onClick={() => signIn("google")}
             disabled={isDisabled}
           >
             <FaGoogle className="h-4 w-4" />

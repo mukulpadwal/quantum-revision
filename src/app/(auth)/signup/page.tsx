@@ -18,6 +18,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { Loader2 } from "lucide-react";
+import { signIn } from "next-auth/react";
 
 interface SignupFormData {
   username: string;
@@ -165,6 +166,7 @@ export default function SignupPage() {
           <Button
             variant="outline"
             className="w-full flex flex-row items-center justify-center gap-x-2"
+            onClick={() => signIn("google")}
             disabled={isDisabled}
           >
             <FaGoogle className="h-4 w-4" />

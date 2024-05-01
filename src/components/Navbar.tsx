@@ -115,7 +115,17 @@ export default function Navbar() {
                 className="border overflow-hidden rounded-full "
                 onClick={() => router.replace("/myaccount/profile")}
               >
-                {String(session?.user?.username).charAt(0).toUpperCase()}
+                {session.user.image ? (
+                  <Image
+                    src={session.user.image}
+                    alt="User Avatar"
+                    height={100}
+                    width={100}
+                    className="rounded-full"
+                  />
+                ) : (
+                  <>{String(session?.user?.username).charAt(0).toUpperCase()}</>
+                )}
               </Button>
               <Button
                 onClick={handleUserLogout}
