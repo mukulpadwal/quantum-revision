@@ -220,11 +220,11 @@ export default function HomePage() {
                 </Popover>
               </div>
             </div>
-            <DialogFooter>
-              <Button type="submit" onClick={handleSaveRevision}>
+            <DialogFooter className="flex flex-row space-x-4 place-content-evenly">
+              <Button className="w-full" type="submit" onClick={handleSaveRevision}>
                 Save
               </Button>
-              <DialogClose asChild>
+              <DialogClose className="w-full" asChild>
                 <Button type="button" variant="secondary">
                   Close
                 </Button>
