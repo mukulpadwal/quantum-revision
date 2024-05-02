@@ -98,7 +98,7 @@ function AboutPage() {
         </li>
         <ul className="list-inside ">
           <li className="list-disc my-2">
-            <a className="underline underline-offset-4" href="https://cashines.wordpress.com/2017/07/28/the-secret-of-successful-revision-1247-memory-technique/">
+            <a target="_blank" className="underline underline-offset-4" href="https://cashines.wordpress.com/2017/07/28/the-secret-of-successful-revision-1247-memory-technique/">
               The Secret of Successful Revision: 1247 Memory Technique
             </a>
             <p className="mt-2">
@@ -108,7 +108,7 @@ function AboutPage() {
           </li>
 
           <li className="list-disc my-2">
-            <a className="underline underline-offset-4" href="https://files.schudio.com/seaton-valley-federation/files/documents/11._1-2-4-7_Rule.pdf">
+            <a target="_blank" className="underline underline-offset-4" href="https://files.schudio.com/seaton-valley-federation/files/documents/11._1-2-4-7_Rule.pdf">
               The 1-2-4-7 Rule: Enhancing Memory Retention
             </a>
             <p className="mt-2">
