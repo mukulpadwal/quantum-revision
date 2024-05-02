@@ -52,6 +52,7 @@ export default function HomePage() {
   const [revisionData, setRevisionData] = useState<Array<RevisionData>>([]);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
   const [isDeletingId, setIsDeletingId] = useState<string>("");
+  const [isSavingNote, setIsSavingNote] = useState(false);
 
   const fetchNoteData = async () => {
     try {
@@ -69,6 +70,7 @@ export default function HomePage() {
   };
 
   const handleSaveRevision = async () => {
+    setIsSavingNote(true);
     try {
       if (
         noteData.title.trim().length > 0 &&
@@ -79,6 +81,10 @@ export default function HomePage() {
         if (response.data.success) {
           await fetchNoteData();
           toast.success(response.data.message);
+          setNoteData({
+            title: "",
+            entryDate: undefined,
+          });
         } else {
           toast.error(response.data.message);
         }
@@ -87,6 +93,8 @@ export default function HomePage() {
       }
     } catch (error: any) {
       console.log(`Some error occured while creating entry.`);
+    } finally {
+      setIsSavingNote(false);
     }
   };
 
@@ -221,9 +229,20 @@ export default function HomePage() {
               </div>
             </div>
             <DialogFooter className="flex flex-row space-x-4 place-content-evenly">
-              <Button className="w-full" type="submit" onClick={handleSaveRevision}>
-                Save
-              </Button>
+              {isSavingNote ? (
+                <Button className="w-full" disabled>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Saving...
+                </Button>
+              ) : (
+                <Button
+                  className="w-full"
+                  type="submit"
+                  onClick={handleSaveRevision}
+                >
+                  Save
+                </Button>
+              )}
               <DialogClose className="w-full" asChild>
                 <Button type="button" variant="secondary">
                   Close
