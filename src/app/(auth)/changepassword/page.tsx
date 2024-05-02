@@ -74,8 +74,7 @@ function ChangePassword() {
       <CardHeader>
         <CardTitle className="text-2xl">Change Password</CardTitle>
         <CardDescription className="w-full">
-          Please enter your old and new passwords to complete the password
-          change process.
+          Please enter a new passwords to complete the password change process.
         </CardDescription>
       </CardHeader>
       <CardContent>
