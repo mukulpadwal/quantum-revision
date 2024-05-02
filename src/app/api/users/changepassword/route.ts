@@ -13,8 +13,7 @@ export async function POST(request: NextRequest) {
     const session = await auth();
 
     try {
-        const { oldPassword, newPassword, confirmNewPassword, token } =
-            await request.json();
+        const { newPassword, confirmNewPassword, token } = await request.json();
 
         let user = null;
 
@@ -24,7 +23,6 @@ export async function POST(request: NextRequest) {
         } else if (session) {
             user = await User.findById(session.user._id);
         }
-        
 
         if (!user) {
             return NextResponse.json(
@@ -42,14 +40,6 @@ export async function POST(request: NextRequest) {
                     new ApiResponse(false, 400, {}, "Token Expired.")
                 );
             }
-        }
-
-        const isCorrectPassword = await bcrypt.compare(oldPassword, user.password);
-
-        if (!isCorrectPassword) {
-            return NextResponse.json(
-                new ApiResponse(false, 400, {}, "Invalid Old Password.")
-            );
         }
 
         const isNewPasswordCorrect = validatePassword(newPassword);

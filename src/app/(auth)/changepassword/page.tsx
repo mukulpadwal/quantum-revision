@@ -11,14 +11,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useState } from "react";
 import { MdOutlineLockReset } from "react-icons/md";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 
 interface ResetPasswordFormData {
-  oldPassword: string;
   newPassword: string;
   confirmNewPassword: string;
 }
@@ -28,7 +27,6 @@ function ChangePassword() {
   const queryParams = useSearchParams();
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
   const [formData, setFormData] = useState<ResetPasswordFormData>({
-    oldPassword: "",
     newPassword: "",
     confirmNewPassword: "",
   });
@@ -39,7 +37,6 @@ function ChangePassword() {
     try {
       setIsDisabled(true);
       if (
-        formData.oldPassword.trim().length > 0 &&
         formData.newPassword.trim().length > 0 &&
         formData.confirmNewPassword.trim().length > 0
       ) {
@@ -83,20 +80,6 @@ function ChangePassword() {
       </CardHeader>
       <CardContent>
         <div className="grid gap-4">
-          <div className="grid gap-2">
-            <Label htmlFor="old-password">Old Password</Label>
-            <Input
-              id="old-password"
-              type="password"
-              name="old-password"
-              placeholder="********"
-              value={formData.oldPassword}
-              onChange={(e) =>
-                setFormData({ ...formData, oldPassword: e.target.value })
-              }
-              required
-            />
-          </div>
           <div className="grid gap-2">
             <Label htmlFor="new-password">New Password</Label>
 
