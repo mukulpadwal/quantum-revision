@@ -92,6 +92,32 @@ function AboutPage() {
           </li>
         </ul>
       </ul>
+      <ul className="m-2 sm:m-8 p-2 ">
+        <li className="underline underline-offset-4 font-bold mb-2">
+          Additional Resources...
+        </li>
+        <ul className="list-inside ">
+          <li className="list-disc my-2">
+            <a className="underline underline-offset-4" href="https://cashines.wordpress.com/2017/07/28/the-secret-of-successful-revision-1247-memory-technique/">
+              The Secret of Successful Revision: 1247 Memory Technique
+            </a>
+            <p className="mt-2">
+              An article discussing the benefits and implementation of the 1247
+              Memory Technique for successful revision.
+            </p>
+          </li>
+
+          <li className="list-disc my-2">
+            <a className="underline underline-offset-4" href="https://files.schudio.com/seaton-valley-federation/files/documents/11._1-2-4-7_Rule.pdf">
+              The 1-2-4-7 Rule: Enhancing Memory Retention
+            </a>
+            <p className="mt-2">
+              A document outlining the 1-2-4-7 Rule and its application in
+              memory retention and effective learning.
+            </p>
+          </li>
+        </ul>
+      </ul>
     </div>
   );
 }
