@@ -11,8 +11,8 @@ export default function FaqsLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <section className="relative flex  justify-center items-center min-w-screen min-h-screen p-2 md:p-8">
+    <main className="relative flex  justify-center items-start min-w-screen min-h-screen p-2 md:p-8">
       {children}
-    </section>
+    </main>
   );
 }
