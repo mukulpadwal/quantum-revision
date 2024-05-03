@@ -16,6 +16,7 @@ const fontSans = FontSans({
 export const metadata: Metadata = {
   title: "Quantum Revision",
   description: "Transform Your Study Sessions with QuantumRevision!",
+  manifest: "/manifest.json",
 };
 
 export default function RootLayout({
