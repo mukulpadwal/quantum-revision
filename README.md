@@ -1,5 +1,5 @@
 <div>
-  <img style="height: 100px; width: 100px;" src="/public/images/logo.jpeg" alt="Quantum Revision Logo" />
+  <img style="height: 100px; width: 100px;" src="/public/logo.jpeg" alt="Quantum Revision Logo" />
 </div>
 
 # Quantum Revision
