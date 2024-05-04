@@ -69,7 +69,7 @@ export default function ChangePasswordPage() {
         <CardHeader>
           <CardTitle className="text-2xl">Change Password</CardTitle>
           <CardDescription className="w-full">
-            Please enter a new passwords to complete the password change
+            Please enter a new password to complete the password change
             process.
           </CardDescription>
         </CardHeader>
