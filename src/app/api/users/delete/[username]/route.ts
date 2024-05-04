@@ -5,6 +5,7 @@ import { auth } from "@/auth";
 import User from "@/models/user.model";
 import Note from "@/models/notes.model";
 import sendMail from "@/helpers/sendMail";
+import novu from "@/helpers/novu";
 
 
 export async function DELETE(
@@ -31,6 +32,8 @@ export async function DELETE(
 
     const user = await User.findByIdAndDelete(session.user._id);
     await Note.deleteMany({ owner: user._id });
+
+    await novu.subscribers.delete(user._id);
 
     if (!user) {
       return NextResponse.json(

@@ -14,6 +14,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import axios from "axios";
+import { Loader2 } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
@@ -21,8 +22,10 @@ import toast from "react-hot-toast";
 const DeleteAccountPage = () => {
   const { data: session } = useSession();
   const [username, setUsername] = useState<string>("");
+  const [isDeleting, setIsDeleting] = useState<boolean>(false);
 
   const handleDeleteAccount = async () => {
+    setIsDeleting(true);
     try {
       const response = await axios.delete(`/api/users/delete/${username}`);
 
@@ -34,6 +37,8 @@ const DeleteAccountPage = () => {
       }
     } catch (error) {
       console.error(`Error while deleting your account : ERROR : ${error}`);
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -74,9 +79,19 @@ const DeleteAccountPage = () => {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDeleteAccount}>
-              Continue
-            </AlertDialogAction>
+            <Button
+              variant={"destructive"}
+              onClick={handleDeleteAccount}
+              disabled={isDeleting}
+            >
+              {isDeleting ? (
+                <>
+                  <Loader2 className="mr-1 h-4 w-4" /> Deleting...
+                </>
+              ) : (
+                <>Delete</>
+              )}
+            </Button>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
