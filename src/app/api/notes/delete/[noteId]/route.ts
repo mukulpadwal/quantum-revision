@@ -40,7 +40,9 @@ export async function DELETE(
         await user.save();
 
         const deletedNote = await Note.findByIdAndDelete(noteId);
-        await novu.events.cancel(deletedNote.novuTransactionId);
+        if(deletedNote.novuTransactionId){
+            await novu.events.cancel(deletedNote.novuTransactionId);
+        }
 
         if (!deletedNote) {
             return NextResponse.json(
