@@ -4,6 +4,7 @@ import ApiResponse from "@/helpers/ApiResponse";
 import Note from "@/models/notes.model";
 import User from "@/models/user.model";
 import { NextRequest, NextResponse } from "next/server";
+import novu from "@/helpers/novu";
 
 export async function DELETE(
     request: NextRequest,
@@ -39,6 +40,7 @@ export async function DELETE(
         await user.save();
 
         const deletedNote = await Note.findByIdAndDelete(noteId);
+        await novu.events.cancel(deletedNote.novuTransactionId);
 
         if (!deletedNote) {
             return NextResponse.json(

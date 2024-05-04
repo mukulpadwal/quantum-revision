@@ -41,6 +41,17 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import Note from "@/types/Note";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export default function HomePage() {
   const { data: session } = useSession();
@@ -123,18 +134,23 @@ export default function HomePage() {
     try {
       data.notification = e;
 
+      const updatedRevisionData = revisionData.map((rData) => {
+        if (rData._id === data._id) {
+          return data;
+        } else {
+          return rData;
+        }
+      });
+
       const response = await axios.post("/api/novu/notification/trigger", data);
 
       if (response.data.success) {
-        // setRevisionData({...revisionData});
+        setRevisionData(updatedRevisionData);
         toast.success(response.data.message);
       } else {
+        setRevisionData(revisionData);
         toast.error(response.data.message);
       }
-
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
     } catch (error) {
       console.log(`Some error occured while turning on the notification.`);
     }
@@ -221,7 +237,8 @@ export default function HomePage() {
                         setNoteData({ ...noteData, entryDate: e })
                       }
                       disabled={(date) =>
-                        date < new Date(new Date().toDateString())
+                        date < new Date(new Date().toDateString()) ||
+                        date > new Date()
                       }
                     />
                   </PopoverContent>
@@ -302,18 +319,40 @@ export default function HomePage() {
                     />
                   </TableCell>
                   <TableCell className="border text-center">
-                    <Button
-                      onClick={() => handleDeleteEntry(data._id || "")}
-                      disabled={isDeleting}
-                    >
-                      {isDeleting && isDeletingId === data._id ? (
-                        <>
-                          <Loader2 className="mr-1 h-4 w-4" /> Deleting...
-                        </>
-                      ) : (
-                        <>Delete</>
-                      )}
-                    </Button>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button variant="destructive">Delete</Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>
+                            Are you absolutely sure?
+                          </AlertDialogTitle>
+                          <AlertDialogDescription>
+                            This action cannot be undone. This will permanently
+                            delete your note and and the notifications will be
+                            switched off.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+
+                          <Button
+                            variant={"destructive"}
+                            onClick={() => handleDeleteEntry(data._id || "")}
+                            disabled={isDeleting}
+                          >
+                            {isDeleting && isDeletingId === data._id ? (
+                              <>
+                                <Loader2 className="mr-1 h-4 w-4" /> Deleting...
+                              </>
+                            ) : (
+                              <>Delete</>
+                            )}
+                          </Button>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </TableCell>
                 </TableRow>
               ))}
