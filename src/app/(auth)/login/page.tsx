@@ -17,6 +17,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { signIn } from "next-auth/react";
+import { Loader2 } from "lucide-react";
 
 interface LoginFormData {
   email: string;
@@ -118,14 +119,22 @@ export default function LoginPage() {
               required
             />
           </div>
-          <Button
-            type="submit"
-            className="w-full flex flex-row items-center justify-center gap-x-2"
-            onClick={handleUserLogin}
-            disabled={isDisabled}
-          >
-            <MdLogin className="h-5 w-5" /> Login
-          </Button>
+          {isDisabled ? (
+            <Button disabled>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Please wait
+            </Button>
+          ) : (
+            <Button
+              type="submit"
+              className="w-full flex flex-row items-center justify-center gap-x-2"
+              onClick={handleUserLogin}
+              disabled={isDisabled}
+            >
+              <MdLogin className="h-5 w-5" /> Login
+            </Button>
+          )}
+
           <div className="my-1 flex flex-row items-center justify-center gap-x-2">
             <hr className="w-1/4" />
             Or Continue With

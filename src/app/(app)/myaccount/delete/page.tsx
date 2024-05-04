@@ -69,7 +69,7 @@ const DeleteAccountPage = () => {
         <AlertDialogTrigger asChild>
           <Button variant="destructive">Delete Account</Button>
         </AlertDialogTrigger>
-        <AlertDialogContent>
+        <AlertDialogContent className="max-w-[400px] sm:max-w-[425px]">
           <AlertDialogHeader>
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
             <AlertDialogDescription>
@@ -86,7 +86,7 @@ const DeleteAccountPage = () => {
             >
               {isDeleting ? (
                 <>
-                  <Loader2 className="mr-1 h-4 w-4" /> Deleting...
+                  <Loader2 className="mr-1 h-4 w-4 animate-spin" /> Deleting...
                 </>
               ) : (
                 <>Delete</>

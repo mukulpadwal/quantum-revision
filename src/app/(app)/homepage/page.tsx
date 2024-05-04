@@ -323,7 +323,7 @@ export default function HomePage() {
                       <AlertDialogTrigger asChild>
                         <Button variant="destructive">Delete</Button>
                       </AlertDialogTrigger>
-                      <AlertDialogContent>
+                      <AlertDialogContent className="max-w-[400px] sm:max-w-[425px]">
                         <AlertDialogHeader>
                           <AlertDialogTitle>
                             Are you absolutely sure?
@@ -344,7 +344,8 @@ export default function HomePage() {
                           >
                             {isDeleting && isDeletingId === data._id ? (
                               <>
-                                <Loader2 className="mr-1 h-4 w-4" /> Deleting...
+                                <Loader2 className="mr-1 h-4 w-4 animate-spin" />{" "}
+                                Deleting...
                               </>
                             ) : (
                               <>Delete</>
