@@ -60,7 +60,7 @@ export const PasswordResetEmail = ({
         </Text>
 
         <Img
-          src="https://github.com/mukulpadwal/quantum-revision/raw/main/public/images/logo.jpeg"
+          src="https://github.com/mukulpadwal/quantum-revision/raw/main/public/logo.jpeg"
           width="32"
           height="32"
           alt="Quantum Revision Logo"
