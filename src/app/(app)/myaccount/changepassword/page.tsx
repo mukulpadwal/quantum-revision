@@ -14,6 +14,7 @@ import { useState } from "react";
 import { MdOutlineLockReset } from "react-icons/md";
 import toast from "react-hot-toast";
 import axios from "axios";
+import { Loader2 } from "lucide-react";
 
 interface ResetPasswordFormData {
   newPassword: string;
@@ -69,8 +70,7 @@ export default function ChangePasswordPage() {
         <CardHeader>
           <CardTitle className="text-2xl">Change Password</CardTitle>
           <CardDescription className="w-full">
-            Please enter a new password to complete the password change
-            process.
+            Please enter a new password to complete the password change process.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -108,15 +108,22 @@ export default function ChangePasswordPage() {
                 required
               />
             </div>
-            <Button
-              type="submit"
-              className="w-full flex flex-row items-center justify-center gap-x-2"
-              disabled={isDisabled}
-              onClick={handleChangePassword}
-            >
-              <MdOutlineLockReset className="w-5 h-5" />
-              Change Password
-            </Button>
+            {isDisabled ? (
+              <Button disabled>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Please wait...
+              </Button>
+            ) : (
+              <Button
+                type="submit"
+                className="w-full flex flex-row items-center justify-center gap-x-2"
+                disabled={isDisabled}
+                onClick={handleChangePassword}
+              >
+                <MdOutlineLockReset className="w-5 h-5" />
+                Change Password
+              </Button>
+            )}
           </div>
         </CardContent>
       </Card>
