@@ -12,6 +12,7 @@ import { signOut } from "next-auth/react";
 import { useSession } from "next-auth/react";
 import toast from "react-hot-toast";
 import { usePathname, useRouter } from "next/navigation";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export default function Navbar() {
   const { data: session } = useSession();
@@ -108,24 +109,15 @@ export default function Navbar() {
         <div className="order-3 flex flex-row justify-center items-center gap-x-4">
           {session ? (
             <>
-              <Button
-                variant="outline"
-                size="icon"
-                className="border overflow-hidden rounded-full "
+              <Avatar
+                className="cursor-pointer"
                 onClick={() => router.replace("/myaccount/profile")}
               >
-                {session.user.image ? (
-                  <Image
-                    src={session.user.image}
-                    alt="User Avatar"
-                    height={100}
-                    width={100}
-                    className="rounded-full"
-                  />
-                ) : (
-                  <>{String(session?.user?.username).charAt(0).toUpperCase()}</>
-                )}
-              </Button>
+                <AvatarImage src={session.user.image} alt="User Avatar" />
+                <AvatarFallback>
+                  {String(session?.user?.username).charAt(0).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
               <Button
                 onClick={handleUserLogout}
                 className={`hidden md:inline-block`}

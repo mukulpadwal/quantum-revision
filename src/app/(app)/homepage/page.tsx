@@ -1,7 +1,6 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import SearchBar from "@/components/SearchBar";
 import { BadgeCheck } from "lucide-react";
 import { Suspense, useEffect, useState } from "react";
 import {
@@ -52,6 +51,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { IoIosSearch } from "react-icons/io";
 
 export default function HomePage() {
   const { data: session } = useSession();
@@ -60,10 +60,11 @@ export default function HomePage() {
     title: "",
     entryDate: undefined,
   });
-  const [revisionData, setRevisionData] = useState<Array<RevisionData>>([]);
+  const [revisionData, setRevisionData] = useState<RevisionData[]>([]);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
   const [isDeletingId, setIsDeletingId] = useState<string>("");
   const [isSavingNote, setIsSavingNote] = useState(false);
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
   const fetchNoteData = async () => {
     try {
@@ -96,6 +97,7 @@ export default function HomePage() {
             title: "",
             entryDate: undefined,
           });
+          setSearchQuery("");
         } else {
           toast.error(response.data.message);
         }
@@ -173,7 +175,16 @@ export default function HomePage() {
             )}
           </div>
         </h1>
-        <SearchBar />
+        <div className="w-full relative sm:ml-auto flex-1 md:grow-0">
+          <IoIosSearch className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Input
+            type="search"
+            placeholder="Search..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full rounded-lg bg-background pl-8 md:w-[200px] lg:w-[336px]"
+          />
+        </div>
       </div>
       <div className="w-full flex justify-center items-center p-2">
         <Dialog>
@@ -294,69 +305,78 @@ export default function HomePage() {
               </TableRow>
             </TableHeader>
             <TableBody className="border">
-              {revisionData.map((data) => (
-                <TableRow className="border" key={data._id}>
-                  <TableCell className="border text-center">
-                    {data.title}
-                  </TableCell>
-                  <TableCell className="border text-center">
-                    {new Date(data?.entryDate!).toDateString()}
-                  </TableCell>
-                  <TableCell className="border text-center">
-                    {new Date(data?.firstDate!).toDateString()}
-                  </TableCell>
-                  <TableCell className="border text-center">
-                    {new Date(data?.secondDate!).toDateString()}
-                  </TableCell>
-                  <TableCell className="border text-center">
-                    {new Date(data?.thirdDate!).toDateString()}
-                  </TableCell>
-                  <TableCell className="border text-center">
-                    <Switch
-                      id={data._id}
-                      checked={data.notification}
-                      onCheckedChange={(e) => handleNotification(e, data)}
-                    />
-                  </TableCell>
-                  <TableCell className="border text-center">
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button variant="destructive">Delete</Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent className="max-w-[400px] sm:max-w-[425px]">
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>
-                            Are you absolutely sure?
-                          </AlertDialogTitle>
-                          <AlertDialogDescription>
-                            This action cannot be undone. This will permanently
-                            delete your note and and the notifications will be
-                            switched off.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+              {revisionData
+                .filter((data) =>
+                  searchQuery === ""
+                    ? data
+                    : data.title
+                        ?.trim()
+                        .toLowerCase()
+                        .includes(searchQuery.trim().toLowerCase())
+                )
+                .map((data) => (
+                  <TableRow className="border" key={data._id}>
+                    <TableCell className="border text-center">
+                      {data.title}
+                    </TableCell>
+                    <TableCell className="border text-center">
+                      {new Date(data?.entryDate!).toDateString()}
+                    </TableCell>
+                    <TableCell className="border text-center">
+                      {new Date(data?.firstDate!).toDateString()}
+                    </TableCell>
+                    <TableCell className="border text-center">
+                      {new Date(data?.secondDate!).toDateString()}
+                    </TableCell>
+                    <TableCell className="border text-center">
+                      {new Date(data?.thirdDate!).toDateString()}
+                    </TableCell>
+                    <TableCell className="border text-center">
+                      <Switch
+                        id={data._id}
+                        checked={data.notification}
+                        onCheckedChange={(e) => handleNotification(e, data)}
+                      />
+                    </TableCell>
+                    <TableCell className="border text-center">
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button variant="destructive">Delete</Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent className="max-w-[400px] sm:max-w-[425px]">
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>
+                              Are you absolutely sure?
+                            </AlertDialogTitle>
+                            <AlertDialogDescription>
+                              This action cannot be undone. This will
+                              permanently delete your note and and the
+                              notifications will be switched off.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
 
-                          <Button
-                            variant={"destructive"}
-                            onClick={() => handleDeleteEntry(data._id || "")}
-                            disabled={isDeleting}
-                          >
-                            {isDeleting && isDeletingId === data._id ? (
-                              <>
-                                <Loader2 className="mr-1 h-4 w-4 animate-spin" />{" "}
-                                Deleting...
-                              </>
-                            ) : (
-                              <>Delete</>
-                            )}
-                          </Button>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-                  </TableCell>
-                </TableRow>
-              ))}
+                            <Button
+                              variant={"destructive"}
+                              onClick={() => handleDeleteEntry(data._id || "")}
+                              disabled={isDeleting}
+                            >
+                              {isDeleting && isDeletingId === data._id ? (
+                                <>
+                                  <Loader2 className="mr-1 h-4 w-4 animate-spin" />{" "}
+                                  Deleting...
+                                </>
+                              ) : (
+                                <>Delete</>
+                              )}
+                            </Button>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </TableCell>
+                  </TableRow>
+                ))}
             </TableBody>
           </Table>
         </Suspense>
