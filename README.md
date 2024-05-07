@@ -9,8 +9,8 @@
 <hr />
 
 <div style="display:flex; flex-direction: row; justify-content: center; place-items: center;">
-  <div style="height: auto; width: auto;"><img src="/public/assets/web_ss.png" alt="Quantum Revision Web App" /></div>
-  <div style="height: auto; width: auto;"><img src="/public/assets/mobile_ss.jpg" alt="Quantum Revision Mobile App" /></div>
+  <img style="height: 100%; width: 100%;" src="/public/assets/web_ss.png" alt="Quantum Revision Web App" />
+<!--   <img style="height: 50%; width: 25%;" src="/public/assets/mobile_ss.jpg" alt="Quantum Revision Mobile App" /> -->
 </div>
 
 ## Getting Started
