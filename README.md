@@ -3,12 +3,15 @@
 </div>
 
 # Quantum Revision
+
 ### Transform Your Study Sessions with QuantumRevision!
 
 <hr />
 
-
-
+<div style="display:flex; flex-direction: row; justify-content: center; place-items: center;">
+  <div style="height: auto; width: auto;"><img src="/public/assets/web_ss.png" alt="Quantum Revision Web App" /></div>
+  <div style="height: auto; width: auto;"><img src="/public/assets/mobile_ss.jpg" alt="Quantum Revision Mobile App" /></div>
+</div>
 
 ## Getting Started
 
@@ -25,5 +28,3 @@ bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-
