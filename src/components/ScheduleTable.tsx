@@ -1,6 +1,4 @@
-"use client";
-
-import React, { Suspense, useEffect, useState } from "react";
+import React, { Suspense } from "react";
 import {
   Table,
   TableBody,
@@ -9,143 +7,223 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import RevisionData from "@/types/RevisionData";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
-import axios from "axios";
-import toast from "react-hot-toast";
 import { Loader2 } from "lucide-react";
+import RevisionData from "@/types/RevisionData";
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "./ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { DialogClose } from "@radix-ui/react-dialog";
 
-async function Schedule() {
-  const [revisionData, setRevisionData] = useState<Array<RevisionData>>([]);
-  const [isDeleting, setIsDeleting] = useState<boolean>(false);
-  const [isDeletingId, setIsDeletingId] = useState<string>("");
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const response = await axios.get("/api/notes/all");
-
-        if (response.data.success) {
-          setRevisionData(response.data.data.user_notes);
-          console.log(response.data.message);
-        } else {
-          console.log(response.data.message);
-        }
-      } catch (error: any) {
-        console.error(`Error while fetching notes : ERROR : ${error}`);
-      }
-    })();
-  }, []);
-
-  const handleDeleteEntry = async (noteId: string) => {
-    setIsDeletingId(noteId);
-    setIsDeleting(true);
-
-    try {
-      const response = await axios.delete(`/api/notes/delete/${noteId}`);
-
-      if (response.data.success) {
-        setRevisionData(revisionData.filter((data) => data._id !== noteId));
-        toast.success(response.data.message);
-      } else {
-        toast.error(response.data.message);
-      }
-    } catch (error: any) {
-      console.error(`Some error occured while deleting entry.`);
-    } finally {
-      setIsDeletingId("");
-      setIsDeleting(false);
-    }
-  };
-
-  const handleNotification = async (e: any, data: RevisionData) => {
-    try {
-      data.notification = e;
-
-      const response = await axios.post("/api/novu/notification/trigger", data);
-
-      if (response.data.success) {
-        toast.success(response.data.message);
-      } else {
-        toast.error(response.data.message);
-      }
-
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
-    } catch (error) {
-      console.log(`Some error occured while turning on the notification.`);
-    }
-  };
-
-  return (
-    <Table className="border w-full">
-      <TableHeader className="border">
-        <TableRow className="border">
-          <TableHead className="border text-center">Topic</TableHead>
-          <TableHead className="border text-center">Created At</TableHead>
-          <TableHead className="border text-center">
-            1st Revision Date
-          </TableHead>
-          <TableHead className="border text-center">
-            2nd Revision Date
-          </TableHead>
-          <TableHead className="border text-center">
-            3rd Revision Date
-          </TableHead>
-          <TableHead className="border text-center">Notification</TableHead>
-          <TableHead className="border text-center">Delete Entry</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody className="border">
-        {revisionData.map((data) => (
-          <TableRow className="border" key={data._id}>
-            <TableCell className="border text-center">{data.title}</TableCell>
-            <TableCell className="border text-center">
-              {new Date(data?.entryDate!).toDateString()}
-            </TableCell>
-            <TableCell className="border text-center">
-              {new Date(data?.firstDate!).toDateString()}
-            </TableCell>
-            <TableCell className="border text-center">
-              {new Date(data?.secondDate!).toDateString()}
-            </TableCell>
-            <TableCell className="border text-center">
-              {new Date(data?.thirdDate!).toDateString()}
-            </TableCell>
-            <TableCell className="border text-center">
-              <Switch
-                id={data._id}
-                checked={data.notification}
-                onCheckedChange={(e) => handleNotification(e, data)}
-              />
-            </TableCell>
-            <TableCell className="border text-center">
-              <Button
-                onClick={() => handleDeleteEntry(data._id || "")}
-                disabled={isDeleting}
-              >
-                {isDeleting && isDeletingId === data._id ? (
-                  <>
-                    <Loader2 className="mr-1 h-4 w-4" /> Deleting...
-                  </>
-                ) : (
-                  <>Delete</>
-                )}
-              </Button>
-            </TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
-  );
+interface ScheduleTableProps {
+  revisionData: RevisionData[];
+  searchQuery: string;
+  handleNotification: (e: any, data: RevisionData) => void;
+  handleDeleteEntry: (noteId: string) => void;
+  isDeleting: boolean;
+  isDeletingId: string;
 }
 
-export default function ScheduleTable() {
+export default function ScheduleTable({
+  revisionData,
+  searchQuery,
+  handleNotification,
+  handleDeleteEntry,
+  isDeleting,
+  isDeletingId,
+}: ScheduleTableProps) {
+  const handleDisplayRevisionSchedule = () => {};
+
   return (
-    <Suspense fallback={"Loading Data..."}>
-      <Schedule />
+    <Suspense fallback={"Loading..."}>
+      <Table className="border w-full">
+        <TableHeader className="border">
+          <TableRow className="border">
+            <TableHead className="border text-center">Topic</TableHead>
+            <TableHead className="border text-center hidden sm:table-cell">
+              Created At
+            </TableHead>
+            <TableHead className="border text-center hidden sm:table-cell">
+              1st Revision Date
+            </TableHead>
+            <TableHead className="border text-center hidden sm:table-cell">
+              2nd Revision Date
+            </TableHead>
+            <TableHead className="border text-center hidden sm:table-cell">
+              3rd Revision Date
+            </TableHead>
+            <TableHead className="border text-center">Notification</TableHead>
+            <TableHead className="border text-center hidden sm:table-cell">
+              Delete Entry
+            </TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody className="border">
+          {revisionData
+            .filter((data) =>
+              searchQuery === ""
+                ? data
+                : data.title
+                    ?.trim()
+                    .toLowerCase()
+                    .includes(searchQuery.trim().toLowerCase())
+            )
+            .map((data) => (
+              <TableRow className="border" key={data._id}>
+                <TableCell
+                  className="border text-center"
+                  onClick={handleDisplayRevisionSchedule}
+                >
+                  <Dialog>
+                    <DialogTrigger>{data.title}</DialogTrigger>
+                    <DialogContent className="max-w-[400px] sm:max-w-[425px] rounded-lg">
+                      <DialogHeader className="mt-6">
+                        <DialogTitle className="text-xl font-bold text-center">
+                          Your Revision Schedule for {data.title}
+                        </DialogTitle>
+                        <DialogDescription className="py-4">
+                          <ul className="flex flex-col justify-center items-center space-y-3">
+                            <li className="flex flex-row justify-center items-center space-x-1">
+                              <h2 className="font-bold text-base">
+                                Created At :{" "}
+                              </h2>
+                              <p className="font-medium text-base">
+                                {new Date(data?.entryDate!).toDateString()}
+                              </p>
+                            </li>
+                            <li className="flex flex-row justify-center items-center space-x-1">
+                              <h2 className="font-bold text-base">
+                                First Revision Date :{" "}
+                              </h2>
+                              <p className="font-medium text-base">
+                                {new Date(data?.firstDate!).toDateString()}
+                              </p>
+                            </li>
+                            <li className="flex flex-row justify-center items-center space-x-1">
+                              <h2 className="font-bold text-base">
+                                Second Revision Date :{" "}
+                              </h2>
+                              <p className="font-medium text-base">
+                                {new Date(data?.secondDate!).toDateString()}
+                              </p>
+                            </li>
+                            <li className="flex flex-row justify-center items-center space-x-1">
+                              <h2 className="font-bold text-base">
+                                Final Revision Date :{" "}
+                              </h2>
+                              <p className="font-medium text-base">
+                                {new Date(data?.thirdDate!).toDateString()}
+                              </p>
+                            </li>
+                          </ul>
+                        </DialogDescription>
+                      </DialogHeader>
+                      <DialogFooter className="flex flex-row justify-center items-center space-x-2">
+                        <Button
+                          variant={"destructive"}
+                          onClick={() => handleDeleteEntry(data._id || "")}
+                          className="sm:hidden w-full"
+                          disabled={isDeleting}
+                        >
+                          {isDeleting && isDeletingId === data._id ? (
+                            <>
+                              <Loader2 className="mr-1 h-4 w-4 animate-spin" />{" "}
+                              Deleting...
+                            </>
+                          ) : (
+                            <>Delete</>
+                          )}
+                        </Button>
+                        <DialogClose asChild>
+                          <Button
+                            type="button"
+                            variant="secondary"
+                            className="w-full"
+                          >
+                            Close
+                          </Button>
+                        </DialogClose>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                </TableCell>
+                <TableCell className="border text-center hidden sm:table-cell">
+                  {new Date(data?.entryDate!).toDateString()}
+                </TableCell>
+                <TableCell className="border text-center hidden sm:table-cell">
+                  {new Date(data?.firstDate!).toDateString()}
+                </TableCell>
+                <TableCell className="border text-center hidden sm:table-cell">
+                  {new Date(data?.secondDate!).toDateString()}
+                </TableCell>
+                <TableCell className="border text-center hidden sm:table-cell">
+                  {new Date(data?.thirdDate!).toDateString()}
+                </TableCell>
+                <TableCell className="border text-center">
+                  <Switch
+                    id={data._id}
+                    checked={data.notification}
+                    onCheckedChange={(e) => handleNotification(e, data)}
+                  />
+                </TableCell>
+                <TableCell className="border text-center hidden sm:table-cell">
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button variant="destructive">Delete</Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent className="max-w-[400px] sm:max-w-[425px]">
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          Are you absolutely sure?
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This action cannot be undone. This will permanently
+                          delete your note and and the notifications will be
+                          switched off.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+
+                        <Button
+                          variant={"destructive"}
+                          onClick={() => handleDeleteEntry(data._id || "")}
+                          disabled={isDeleting}
+                        >
+                          {isDeleting && isDeletingId === data._id ? (
+                            <>
+                              <Loader2 className="mr-1 h-4 w-4 animate-spin" />{" "}
+                              Deleting...
+                            </>
+                          ) : (
+                            <>Delete</>
+                          )}
+                        </Button>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </TableCell>
+              </TableRow>
+            ))}
+        </TableBody>
+      </Table>
     </Suspense>
   );
 }

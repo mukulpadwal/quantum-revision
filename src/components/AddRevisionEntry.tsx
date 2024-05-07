@@ -1,6 +1,3 @@
-"use state";
-
-import React, { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -24,39 +21,22 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import Note from "@/types/Note";
-import axios from "axios";
-import toast from "react-hot-toast";
+import { Loader2 } from "lucide-react";
+import { DialogClose } from "@radix-ui/react-dialog";
 
-const AddRevisionEntry = () => {
-  const [noteData, setNoteData] = useState<Note>({
-    title: "",
-    entryDate: undefined,
-  });
+interface AddRevisionEntryProps {
+  noteData: Note;
+  handleSetNoteData: (e: any) => void;
+  isSavingNote: boolean;
+  handleSaveRevision: () => void;
+}
 
-  const handleSaveRevision = async () => {
-    try {   
-      if (
-        noteData.title.trim().length > 0 &&
-        noteData.entryDate !== undefined
-      ) {
-        const response = await axios.post("/api/notes/create", noteData);
-
-        if (response.data.success) {
-          toast.success(response.data.message);
-          setTimeout(() => {
-            window.location.reload();
-          }, 500);
-        } else {
-          toast.error(response.data.message);
-        }
-      } else {
-        toast.error("Please provide all the fields.");
-      }
-    } catch (error: any) {
-      console.log(`Some error occured while creating entry.`);
-    }
-  };
-
+const AddRevisionEntry = ({
+  noteData,
+  handleSetNoteData,
+  isSavingNote,
+  handleSaveRevision,
+}: AddRevisionEntryProps) => {
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -83,9 +63,7 @@ const AddRevisionEntry = () => {
             <Input
               id="title"
               value={noteData.title}
-              onChange={(e) =>
-                setNoteData({ ...noteData, title: e.target.value })
-              }
+              onChange={(e) => handleSetNoteData(e)}
               className="col-span-3"
               required
             />
@@ -115,18 +93,36 @@ const AddRevisionEntry = () => {
                 <Calendar
                   mode="single"
                   selected={noteData.entryDate}
-                  onSelect={(e) => setNoteData({ ...noteData, entryDate: e })}
-                  disabled={(date) => date < new Date(new Date().toDateString())}
-               
+                  onSelect={(e) => handleSetNoteData(e)}
+                  disabled={(date) =>
+                    date < new Date(new Date().toDateString()) ||
+                    date > new Date()
+                  }
                 />
               </PopoverContent>
             </Popover>
           </div>
         </div>
-        <DialogFooter>
-          <Button type="submit" onClick={handleSaveRevision}>
-            Save
-          </Button>
+        <DialogFooter className="flex flex-row space-x-4 place-content-evenly">
+          {isSavingNote ? (
+            <Button className="w-full" disabled>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Saving...
+            </Button>
+          ) : (
+            <Button
+              className="w-full"
+              type="submit"
+              onClick={handleSaveRevision}
+            >
+              Save
+            </Button>
+          )}
+          <DialogClose className="w-full" asChild>
+            <Button type="button" variant="secondary">
+              Close
+            </Button>
+          </DialogClose>
         </DialogFooter>
       </DialogContent>
     </Dialog>
