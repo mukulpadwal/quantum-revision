@@ -99,40 +99,40 @@ export default function ScheduleTable({
                           Your Revision Schedule for {data.title}
                         </DialogTitle>
                         <DialogDescription className="py-4">
-                          <ul className="flex flex-col justify-center items-center space-y-3">
-                            <li className="flex flex-row justify-center items-center space-x-1">
-                              <h2 className="font-bold text-base">
+                          <span className="flex flex-col justify-center items-center space-y-3">
+                            <span className="flex flex-row justify-center items-center space-x-1">
+                              <span className="font-bold text-base">
                                 Created At :{" "}
-                              </h2>
-                              <p className="font-medium text-base">
+                              </span>
+                              <span className="font-medium text-base">
                                 {new Date(data?.entryDate!).toDateString()}
-                              </p>
-                            </li>
-                            <li className="flex flex-row justify-center items-center space-x-1">
-                              <h2 className="font-bold text-base">
+                              </span>
+                            </span>
+                            <span className="flex flex-row justify-center items-center space-x-1">
+                              <span className="font-bold text-base">
                                 First Revision Date :{" "}
-                              </h2>
-                              <p className="font-medium text-base">
+                              </span>
+                              <span className="font-medium text-base">
                                 {new Date(data?.firstDate!).toDateString()}
-                              </p>
-                            </li>
-                            <li className="flex flex-row justify-center items-center space-x-1">
-                              <h2 className="font-bold text-base">
+                              </span>
+                            </span>
+                            <span className="flex flex-row justify-center items-center space-x-1">
+                              <span className="font-bold text-base">
                                 Second Revision Date :{" "}
-                              </h2>
-                              <p className="font-medium text-base">
+                              </span>
+                              <span className="font-medium text-base">
                                 {new Date(data?.secondDate!).toDateString()}
-                              </p>
-                            </li>
-                            <li className="flex flex-row justify-center items-center space-x-1">
-                              <h2 className="font-bold text-base">
+                              </span>
+                            </span>
+                            <span className="flex flex-row justify-center items-center space-x-1">
+                              <span className="font-bold text-base">
                                 Final Revision Date :{" "}
-                              </h2>
-                              <p className="font-medium text-base">
+                              </span>
+                              <span className="font-medium text-base">
                                 {new Date(data?.thirdDate!).toDateString()}
-                              </p>
-                            </li>
-                          </ul>
+                              </span>
+                            </span>
+                          </span>
                         </DialogDescription>
                       </DialogHeader>
                       <DialogFooter className="flex flex-row justify-center items-center space-x-2">
