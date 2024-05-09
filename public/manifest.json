@@ -28,5 +28,21 @@
             "sizes": "512x512",
             "type": "image/png"
         }
+    ],
+    "screenshots" : [
+        {
+            "src": "/assets/web_ss.png",
+            "sizes": "1920x1200",
+            "type": "image/png",
+            "form_factor": "wide",
+            "label": "Quantum Revision Desktop"
+        },
+        {
+            "src": "/assets/mobile_ss.jpg",
+            "sizes": "782x1117",
+            "type": "image/jpg",
+            "form_factor": "narrow",
+            "label": "Quantum Revision Mobile"
+        }
     ]
 }

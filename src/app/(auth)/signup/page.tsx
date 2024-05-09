@@ -163,23 +163,23 @@ export default function SignupPage() {
             </Button>
           )}
           <div className="my-1 flex flex-row items-center justify-center gap-x-2">
-            <hr className="w-1/4" />
-            Or Continue With
-            <hr className="w-1/4" />
+            <hr className="w-3/4" />
+            Or
+            <hr className="w-3/4" />
           </div>
           <Button
             variant="outline"
             className="w-full flex flex-row items-center justify-center gap-x-2"
             onClick={() => signIn("google")}
-            disabled={isDisabled}
+            disabled
           >
             <FaGoogle className="h-4 w-4" />
-            Sign in with Google
+            Continue with Google (Coming Soon)
           </Button>
         </div>
         <div className="mt-4 text-center text-sm">
           Already have an account?{" "}
-          <Link href="/login" className="underline">
+          <Link href="/login" className="underline underline-offset-2">
             Log in
           </Link>
         </div>
