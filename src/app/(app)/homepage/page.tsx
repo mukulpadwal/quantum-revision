@@ -29,6 +29,8 @@ export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [isEnablingNotification, setIsEnablingNotification] =
     useState<boolean>(false);
+  const [isEnablingNotificationId, setIsEnablingNotificationId] = useState<string>("");
+
 
   const fetchNoteData = async () => {
     try {
@@ -96,8 +98,9 @@ export default function HomePage() {
     }
   };
 
-  const handleNotification = async (e: any, data: RevisionData) => {
+  const handleNotification = async (e: any, data: RevisionData, noteId: string) => {
     setIsEnablingNotification(true);
+    setIsEnablingNotificationId(noteId);
     try {
       // Let's ask the user for notification permission
       const permission = await requestNotificationPermission();
@@ -205,6 +208,7 @@ export default function HomePage() {
       console.error(error);
     } finally {
       setIsEnablingNotification(false);
+      setIsEnablingNotificationId("");
     }
   };
 
@@ -260,6 +264,7 @@ export default function HomePage() {
           isDeleting={isDeleting}
           isDeletingId={isDeletingId}
           isEnablingNotification={isEnablingNotification}
+          isEnablingNotificationId={isEnablingNotificationId}
         />
       </div>
     </div>

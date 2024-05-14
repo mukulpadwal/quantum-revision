@@ -27,6 +27,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    console.log(`Token : ${token}`);
+
     await novu.subscribers.identify(session.user._id, {
       email: session.user.email,
     });

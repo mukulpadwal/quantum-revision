@@ -35,11 +35,12 @@ import { DialogClose } from "@radix-ui/react-dialog";
 interface ScheduleTableProps {
   revisionData: RevisionData[];
   searchQuery: string;
-  handleNotification: (e: any, data: RevisionData) => void;
+  handleNotification: (e: any, data: RevisionData, noteId: string) => void;
   handleDeleteEntry: (noteId: string) => void;
   isDeleting: boolean;
   isDeletingId: string;
   isEnablingNotification: boolean;
+  isEnablingNotificationId: string;
 }
 
 export default function ScheduleTable({
@@ -50,6 +51,7 @@ export default function ScheduleTable({
   isDeleting,
   isDeletingId,
   isEnablingNotification,
+  isEnablingNotificationId
 }: ScheduleTableProps) {
   const handleDisplayRevisionSchedule = () => {};
 
@@ -179,7 +181,7 @@ export default function ScheduleTable({
                   {new Date(data?.thirdDate!).toDateString()}
                 </TableCell>
                 <TableCell className="border text-center">
-                  {isEnablingNotification ? (
+                  {isEnablingNotification && isEnablingNotificationId === data._id ? (
                     <div className="w-full flex items-center justify-center">
                       <Loader2 className="animate-spin" />
                     </div>
@@ -187,7 +189,7 @@ export default function ScheduleTable({
                     <Switch
                       id={data._id}
                       checked={data.notification}
-                      onCheckedChange={(e) => handleNotification(e, data)}
+                      onCheckedChange={(e) => handleNotification(e, data, data._id || "")}
                     />
                   )}
                 </TableCell>
