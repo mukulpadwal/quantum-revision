@@ -33,9 +33,6 @@ export async function POST(request: NextRequest) {
       email: session.user.email,
     });
 
-    console.log(`Novu User : ${novuUser}`);
-
-
     const updatedUser = await novu.subscribers.setCredentials(
       session.user._id,
       PushProviderIdEnum.FCM,
@@ -43,8 +40,6 @@ export async function POST(request: NextRequest) {
         deviceTokens: [token],
       }
     );
-
-    console.log(`Updated User : ${updatedUser}`);
 
     const note = await Note.findById(_id);
 
@@ -65,6 +60,11 @@ export async function POST(request: NextRequest) {
           firstSendAt: new Date(firstDate).toISOString(),
           secondSendAt: new Date(secondDate).toISOString(),
           thirdSendAt: new Date(thirdDate).toISOString(),
+        },
+        overrides: {
+          fcm: {
+            type: "data",
+          },
         },
       });
 
