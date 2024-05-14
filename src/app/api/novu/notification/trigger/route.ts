@@ -2,7 +2,8 @@ import { auth } from "@/auth";
 import connectToDB from "@/db/connectToDB";
 import ApiResponse from "@/helpers/ApiResponse";
 import { NextResponse, NextRequest } from "next/server";
-import novu from "@/helpers/novu";
+import { Novu } from "@novu/node";
+
 import Note from "@/models/notes.model";
 import { PushProviderIdEnum } from "@novu/node";
 
@@ -29,11 +30,13 @@ export async function POST(request: NextRequest) {
 
     console.log(`User Token : ${token}`);
 
-    const novuUser = await novu.subscribers.identify(session.user._id, {
+    const novu = new Novu(String(process.env.NOVU_API_KEY));
+
+    await novu.subscribers.identify(session.user._id, {
       email: session.user.email,
     });
 
-    const updatedUser = await novu.subscribers.setCredentials(
+    await novu.subscribers.setCredentials(
       session.user._id,
       PushProviderIdEnum.FCM,
       {
