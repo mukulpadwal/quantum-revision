@@ -29,11 +29,14 @@ export async function POST(request: NextRequest) {
 
     console.log(`User Token : ${token}`);
 
-    await novu.subscribers.identify(session.user._id, {
+    const novuUser = await novu.subscribers.identify(session.user._id, {
       email: session.user.email,
     });
 
-    await novu.subscribers.setCredentials(
+    console.log(`Novu User : ${novuUser}`);
+
+
+    const updatedUser = await novu.subscribers.setCredentials(
       session.user._id,
       PushProviderIdEnum.FCM,
       {
@@ -41,12 +44,14 @@ export async function POST(request: NextRequest) {
       }
     );
 
+    console.log(`Updated User : ${updatedUser}`);
+
     const note = await Note.findById(_id);
 
     let response;
 
     if (notification) {
-      response = await novu.trigger("on-boarding-notification", {
+      response = await novu.trigger("quantum-revision", {
         to: {
           subscriberId: session.user._id,
         },
