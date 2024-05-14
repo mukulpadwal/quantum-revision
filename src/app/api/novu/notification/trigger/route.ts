@@ -4,14 +4,22 @@ import ApiResponse from "@/helpers/ApiResponse";
 import { NextResponse, NextRequest } from "next/server";
 import novu from "@/helpers/novu";
 import Note from "@/models/notes.model";
+import { PushProviderIdEnum } from "@novu/node";
 
 export async function POST(request: NextRequest) {
   await connectToDB();
 
   try {
     const session = await auth();
-    const { _id, title, firstDate, secondDate, thirdDate, notification } =
-      await request.json();
+    const {
+      _id,
+      title,
+      firstDate,
+      secondDate,
+      thirdDate,
+      notification,
+      token,
+    } = await request.json();
 
     if (!session) {
       return NextResponse.json(
@@ -19,12 +27,26 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    console.log(`User Token : ${token}`);
+
+    await novu.subscribers.identify(session.user._id, {
+      email: session.user.email,
+    });
+
+    await novu.subscribers.setCredentials(
+      session.user._id,
+      PushProviderIdEnum.FCM,
+      {
+        deviceTokens: [token],
+      }
+    );
+
     const note = await Note.findById(_id);
 
     let response;
 
     if (notification) {
-      response = await novu.trigger("quantum-revision", {
+      response = await novu.trigger("on-boarding-notification", {
         to: {
           subscriberId: session.user._id,
         },
@@ -51,10 +73,10 @@ export async function POST(request: NextRequest) {
 
     console.log(response.data);
 
-    if (!response?.data?.data) {
+    if (!response?.data) {
       return NextResponse.json(
         new ApiResponse(
-          true,
+          false,
           400,
           {},
           `Something went wrong  to switch on notification. Please try again later.`

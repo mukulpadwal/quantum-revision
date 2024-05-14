@@ -39,6 +39,7 @@ interface ScheduleTableProps {
   handleDeleteEntry: (noteId: string) => void;
   isDeleting: boolean;
   isDeletingId: string;
+  isEnablingNotification: boolean;
 }
 
 export default function ScheduleTable({
@@ -48,6 +49,7 @@ export default function ScheduleTable({
   handleDeleteEntry,
   isDeleting,
   isDeletingId,
+  isEnablingNotification,
 }: ScheduleTableProps) {
   const handleDisplayRevisionSchedule = () => {};
 
@@ -177,11 +179,17 @@ export default function ScheduleTable({
                   {new Date(data?.thirdDate!).toDateString()}
                 </TableCell>
                 <TableCell className="border text-center">
-                  <Switch
-                    id={data._id}
-                    checked={data.notification}
-                    onCheckedChange={(e) => handleNotification(e, data)}
-                  />
+                  {isEnablingNotification ? (
+                    <div className="w-full flex items-center justify-center">
+                      <Loader2 className="animate-spin" />
+                    </div>
+                  ) : (
+                    <Switch
+                      id={data._id}
+                      checked={data.notification}
+                      onCheckedChange={(e) => handleNotification(e, data)}
+                    />
+                  )}
                 </TableCell>
                 <TableCell className="border text-center hidden sm:table-cell">
                   <AlertDialog>

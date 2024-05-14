@@ -10,6 +10,10 @@ import Note from "@/types/Note";
 import SearchBar from "@/components/SearchBar";
 import AddRevisionEntry from "@/components/AddRevisionEntry";
 import ScheduleTable from "@/components/ScheduleTable";
+import requestNotificationPermission from "@/helpers/requestNotificationPermission";
+import { getMessaging, getToken, onMessage } from "firebase/messaging";
+import { app } from "@/helpers/firebase";
+import Image from "next/image";
 
 export default function HomePage() {
   const { data: session } = useSession();
@@ -23,6 +27,8 @@ export default function HomePage() {
   const [isDeletingId, setIsDeletingId] = useState<string>("");
   const [isSavingNote, setIsSavingNote] = useState(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [isEnablingNotification, setIsEnablingNotification] =
+    useState<boolean>(false);
 
   const fetchNoteData = async () => {
     try {
@@ -91,28 +97,120 @@ export default function HomePage() {
   };
 
   const handleNotification = async (e: any, data: RevisionData) => {
+    setIsEnablingNotification(true);
     try {
-      data.notification = e;
+      // Let's ask the user for notification permission
+      const permission = await requestNotificationPermission();
 
-      const updatedRevisionData = revisionData.map((rData) => {
-        if (rData._id === data._id) {
-          return data;
+      if (permission === "granted") {
+        // We will write the logic here
+        console.log("Notification permission granted.");
+
+        // Let us check if service worker is supported or not
+        if ("serviceWorker" in navigator) {
+          try {
+            // Now we need to register firebase service worker
+            const messaging = getMessaging(app);
+            const swUrl = `/firebase-messaging-sw.js?apiKey=${process.env.NEXT_PUBLIC_FIREBASE_API_KEY}&authDomain=${process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN}&projectId=${process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID}&storageBucket=${process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET}&messagingSenderId=${process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID}&appId=${process.env.NEXT_PUBLIC_FIREBASE_APP_ID}&measurementId=${process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID}`;
+
+            const serviceWorkerRegistration =
+              await navigator.serviceWorker.register(swUrl);
+
+            if (!serviceWorkerRegistration.active) {
+              await serviceWorkerRegistration.update();
+              // Wait for activation (similar to using 'installing' property)
+            }
+
+            let token;
+            if (e) {
+              token = await getToken(messaging, {
+                vapidKey: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY,
+                serviceWorkerRegistration,
+              });
+            } else {
+              token = "";
+            }
+
+            console.log(token);
+            console.log(typeof token);
+
+            data.notification = e;
+
+            const updatedRevisionData = revisionData.map((rData) => {
+              if (rData._id === data._id) {
+                return data;
+              } else {
+                return rData;
+              }
+            });
+
+            const response = await axios.post(
+              "/api/novu/notification/trigger",
+              {
+                ...data,
+                token,
+              }
+            );
+
+            if (e && response.data.success) {
+              setRevisionData(updatedRevisionData);
+              onMessage(messaging, (payload) => {
+                console.log("Message received. ", payload);
+                toast.custom((t) => (
+                  <div
+                    className={`${
+                      t.visible ? "animate-enter" : "animate-leave"
+                    } max-w-md w-full bg-white shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5`}
+                  >
+                    <div className="flex-1 w-0 p-4">
+                      <div className="flex items-start">
+                        <div className="flex-shrink-0 pt-0.5">
+                          <Image
+                            className="rounded-full"
+                            src="/logo.jpeg"
+                            alt="App Logo"
+                            height={50}
+                            width={50}
+                            priority={true}
+                          />
+                        </div>
+                        <div className="ml-3 flex-1">
+                          <p className="text-sm font-medium text-gray-900">
+                            {payload.notification?.title}
+                          </p>
+                          <p className="mt-1 text-sm text-gray-500">
+                            {payload.notification?.body}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ));
+              });
+            } else if (!e && response.data.success) {
+              setRevisionData(updatedRevisionData);
+              toast.success(response.data.message);
+            } else {
+              setRevisionData(revisionData);
+              toast.error(response.data.message);
+            }
+          } catch (error) {
+            console.error(
+              `Some error occured while turning on the notification : ERROR : ${error}`
+            );
+          }
         } else {
-          return rData;
+          console.error("Service worker is not supported in your browser.");
         }
-      });
-
-      const response = await axios.post("/api/novu/notification/trigger", data);
-
-      if (response.data.success) {
-        setRevisionData(updatedRevisionData);
-        toast.success(response.data.message);
-      } else {
-        setRevisionData(revisionData);
-        toast.error(response.data.message);
+      } else if (permission === "denied") {
+        toast.error(
+          "You have denied the notification permission. Kindly enable the notification to get timely reminders."
+        );
       }
     } catch (error) {
-      console.log(`Some error occured while turning on the notification.`);
+      console.error(error);
+    } finally {
+      setIsEnablingNotification(false);
     }
   };
 
@@ -167,6 +265,7 @@ export default function HomePage() {
           handleDeleteEntry={handleDeleteEntry}
           isDeleting={isDeleting}
           isDeletingId={isDeletingId}
+          isEnablingNotification={isEnablingNotification}
         />
       </div>
     </div>
