@@ -103,9 +103,6 @@ export default function HomePage() {
       const permission = await requestNotificationPermission();
 
       if (permission === "granted") {
-        // We will write the logic here
-        console.log("Notification permission granted.");
-
         // Let us check if service worker is supported or not
         if ("serviceWorker" in navigator) {
           try {
@@ -130,9 +127,6 @@ export default function HomePage() {
             } else {
               token = "";
             }
-
-            console.log(token);
-            console.log(typeof token);
 
             data.notification = e;
 

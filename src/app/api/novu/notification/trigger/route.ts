@@ -2,10 +2,9 @@ import { auth } from "@/auth";
 import connectToDB from "@/db/connectToDB";
 import ApiResponse from "@/helpers/ApiResponse";
 import { NextResponse, NextRequest } from "next/server";
-import { Novu } from "@novu/node";
-
 import Note from "@/models/notes.model";
 import { PushProviderIdEnum } from "@novu/node";
+import novu from "@/helpers/novu";
 
 export async function POST(request: NextRequest) {
   await connectToDB();
@@ -27,10 +26,6 @@ export async function POST(request: NextRequest) {
         new ApiResponse(false, 400, {}, `Invalid Request.`)
       );
     }
-
-    console.log(`User Token : ${token}`);
-
-    const novu = new Novu(String(process.env.NOVU_API_KEY));
 
     await novu.subscribers.identify(session.user._id, {
       email: session.user.email,
@@ -64,11 +59,6 @@ export async function POST(request: NextRequest) {
           secondSendAt: new Date(secondDate).toISOString(),
           thirdSendAt: new Date(thirdDate).toISOString(),
         },
-        overrides: {
-          fcm: {
-            type: "data",
-          },
-        },
       });
 
       let transactionId = await response?.data?.data?.transactionId;
@@ -78,8 +68,6 @@ export async function POST(request: NextRequest) {
       response = await novu.events.cancel(note.novuTransactionId);
       note.novuTransactionId = "";
     }
-
-    console.log(response.data);
 
     if (!response?.data) {
       return NextResponse.json(
