@@ -7,21 +7,15 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { MdNoteAdd } from "react-icons/md";
 import { Label } from "@/components/ui/label";
-import { Calendar } from "@/components/ui/calendar";
 import { SlCalender } from "react-icons/sl";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import Note from "@/types/Note";
-import { Loader2 } from "lucide-react";
+import { Loader2, Timer } from "lucide-react";
 import { DialogClose } from "@radix-ui/react-dialog";
 
 interface AddRevisionEntryProps {
@@ -72,35 +66,18 @@ const AddRevisionEntry = ({
             <Label htmlFor="date" className="text-right">
               Date
             </Label>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant={"outline"}
-                  className={cn(
-                    "w-[240px] justify-start text-left font-normal",
-                    !noteData.entryDate && "text-muted-foreground"
-                  )}
-                >
-                  <SlCalender className="mr-2 h-4 w-4" />
-                  {noteData.entryDate ? (
-                    format(noteData.entryDate, "PPP")
-                  ) : (
-                    <span>Pick a date</span>
-                  )}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  selected={noteData.entryDate}
-                  onSelect={(e) => handleSetNoteData(e)}
-                  disabled={(date) =>
-                    date < new Date(new Date().toDateString()) ||
-                    date > new Date()
-                  }
-                />
-              </PopoverContent>
-            </Popover>
+
+            <Button
+              variant={"outline"}
+              className={cn(
+                "w-[240px] justify-start text-left font-normal cursor-auto",
+                !noteData.entryDate && "text-muted-foreground"
+              )}
+            >
+              <SlCalender className="mr-2 h-4 w-4" />
+
+              {format(noteData.entryDate, "PPP")}
+            </Button>
           </div>
         </div>
         <DialogFooter className="flex flex-row space-x-4 place-content-evenly">

@@ -20,7 +20,7 @@ export default function HomePage() {
 
   const [noteData, setNoteData] = useState<Note>({
     title: "",
-    entryDate: undefined,
+    entryDate: new Date(),
   });
   const [revisionData, setRevisionData] = useState<RevisionData[]>([]);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
@@ -29,8 +29,8 @@ export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [isEnablingNotification, setIsEnablingNotification] =
     useState<boolean>(false);
-  const [isEnablingNotificationId, setIsEnablingNotificationId] = useState<string>("");
-
+  const [isEnablingNotificationId, setIsEnablingNotificationId] =
+    useState<string>("");
 
   const fetchNoteData = async () => {
     try {
@@ -61,7 +61,7 @@ export default function HomePage() {
           toast.success(response.data.message);
           setNoteData({
             title: "",
-            entryDate: undefined,
+            entryDate: new Date(),
           });
           setSearchQuery("");
         } else {
@@ -98,7 +98,11 @@ export default function HomePage() {
     }
   };
 
-  const handleNotification = async (e: any, data: RevisionData, noteId: string) => {
+  const handleNotification = async (
+    e: any,
+    data: RevisionData,
+    noteId: string
+  ) => {
     setIsEnablingNotification(true);
     setIsEnablingNotificationId(noteId);
     try {
