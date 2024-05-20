@@ -17,9 +17,6 @@ interface ReminderDrawerType {
 }
 
 const ReminderDrawer = ({ reminderData }: ReminderDrawerType) => {
-
-  console.log(reminderData);
-  
   return (
     <Drawer>
       <DrawerTrigger asChild>
@@ -40,9 +37,13 @@ const ReminderDrawer = ({ reminderData }: ReminderDrawerType) => {
             </DrawerDescription>
           </DrawerHeader>
           <div className="p-4 pb-0">
-            <div className="flex items-center justify-center space-x-2">
-              Display your data here
-            </div>
+            <ul className="flex items-center justify-center space-x-2">
+              {reminderData.length === 0
+                ? "No topics to revise today..."
+                : reminderData.map((data) => (
+                    <li key={data._id}>{data.title}</li>
+                  ))}
+            </ul>
           </div>
           <DrawerFooter>
             <DrawerClose asChild>

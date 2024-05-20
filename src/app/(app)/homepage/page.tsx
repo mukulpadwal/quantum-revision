@@ -259,7 +259,7 @@ export default function HomePage() {
 
   useEffect(() => {
     fetchNoteData();
-  }, []);
+  }, [revisionData]);
 
   useEffect(() => {
     fetchReminderData();
