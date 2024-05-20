@@ -10,12 +10,38 @@ export async function POST(request: NextRequest) {
 
     try {
         const session = await auth();
-        const { title, entryDate } = await request.json();
+        const { title, entryDate, time } = await request.json();
 
         if (session === null) {
             return NextResponse.json(
                 new ApiResponse(false, 400, {}, "Unauthorized Request.")
             );
+        }
+
+        // Parse the date-time string to create a Date object
+        const date = new Date(entryDate);
+
+        // Check if the parsed date is valid
+        if (isNaN(date.getTime())) {
+            console.error("Invalid date-time string provided");
+        } else {
+            // Parse the time string
+            const [hours, minutes] = time.split(":").map(Number);
+
+            // Check if the parsed time is valid
+            if (
+                isNaN(hours) ||
+                isNaN(minutes) ||
+                hours < 0 ||
+                hours > 23 ||
+                minutes < 0 ||
+                minutes > 59
+            ) {
+                console.error("Invalid time string provided");
+            } else {
+                // Combine the date and time
+                date.setUTCHours(hours, minutes, 0, 0); // Set hours, minutes, seconds, and milliseconds to 0
+            }
         }
 
         const user = await User.findById(session.user._id);
@@ -32,9 +58,9 @@ export async function POST(request: NextRequest) {
             owner: session.user._id,
         });
 
-        note.firstDate = new Date(new Date(entryDate).getTime() + 86400000 * 1);
-        note.secondDate = new Date(new Date(entryDate).getTime() + 86400000 * 3);
-        note.thirdDate = new Date(new Date(entryDate).getTime() + 86400000 * 7);
+        note.firstDate = new Date(new Date(date).getTime() + 86400000 * 1);
+        note.secondDate = new Date(new Date(date).getTime() + 86400000 * 3);
+        note.thirdDate = new Date(new Date(date).getTime() + 86400000 * 7);
 
         await note.save();
 

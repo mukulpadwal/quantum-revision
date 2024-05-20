@@ -1,7 +1,7 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { BadgeCheck } from "lucide-react";
+import { BadgeCheck, BellDot } from "lucide-react";
 import { useEffect, useState } from "react";
 import RevisionData from "@/types/RevisionData";
 import axios from "axios";
@@ -14,6 +14,8 @@ import requestNotificationPermission from "@/helpers/requestNotificationPermissi
 import { getMessaging, getToken, onMessage } from "firebase/messaging";
 import { app } from "@/helpers/firebase";
 import Image from "next/image";
+import ReminderDrawer from "@/components/ReminderDrawer";
+import Reminder from "@/types/Reminder";
 
 export default function HomePage() {
   const { data: session } = useSession();
@@ -21,6 +23,7 @@ export default function HomePage() {
   const [noteData, setNoteData] = useState<Note>({
     title: "",
     entryDate: new Date(),
+    time: "",
   });
   const [revisionData, setRevisionData] = useState<RevisionData[]>([]);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
@@ -31,6 +34,7 @@ export default function HomePage() {
     useState<boolean>(false);
   const [isEnablingNotificationId, setIsEnablingNotificationId] =
     useState<string>("");
+  const [reminderData, setReminderData] = useState<Reminder[]>([]);
 
   const fetchNoteData = async () => {
     try {
@@ -62,6 +66,7 @@ export default function HomePage() {
           setNoteData({
             title: "",
             entryDate: new Date(),
+            time: "",
           });
           setSearchQuery("");
         } else {
@@ -221,15 +226,43 @@ export default function HomePage() {
   };
 
   const handleSetNoteData = (e: any) => {
-    if (e?.target?.localName === "input") {
-      setNoteData({ title: e.target.value, entryDate: noteData.entryDate });
-    } else {
-      setNoteData({ title: noteData.title, entryDate: e });
+    if (e?.target?.type === "text") {
+      setNoteData({
+        title: e.target.value,
+        entryDate: noteData.entryDate,
+        time: noteData.time,
+      });
+    } else if (e?.target?.type === "time") {
+      setNoteData({
+        title: noteData.title,
+        entryDate: noteData.entryDate,
+        time: e.target.value,
+      });
+    }
+  };
+
+  const fetchReminderData = async () => {
+    try {
+      const response = await axios.get("/api/notes/reminder");
+
+      if (response.data.success) {
+        setReminderData(response.data.data);
+      } else {
+        console.log("Could not fetch reminder data.");
+      }
+    } catch (error) {
+      console.error(
+        `Something went wrong while fetching reminder data : ERROR : ${error}`
+      );
     }
   };
 
   useEffect(() => {
     fetchNoteData();
+  }, []);
+
+  useEffect(() => {
+    fetchReminderData();
   }, []);
 
   return (
@@ -246,12 +279,18 @@ export default function HomePage() {
           </div>
         </h1>
 
-        <SearchBar
-          searchQuery={searchQuery}
-          handleSearchQuery={handleSearchQuery}
-        />
+        <div>
+          <ReminderDrawer reminderData={reminderData} />
+        </div>
+
+        <div className="w-full sm:w-auto">
+          <SearchBar
+            searchQuery={searchQuery}
+            handleSearchQuery={handleSearchQuery}
+          />
+        </div>
       </div>
-      <div className="w-full flex justify-center items-center p-2">
+      <div className="w-full flex justify-center md:justify-center items-center p-2">
         <AddRevisionEntry
           noteData={noteData}
           handleSetNoteData={handleSetNoteData}

@@ -34,10 +34,7 @@ const AddRevisionEntry = ({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button
-          variant="outline"
-          className="flex flex-row justify-center items-center gap-x-2"
-        >
+        <Button className="flex flex-row justify-center items-center gap-x-2">
           <MdNoteAdd className="h-4 w-4" /> Add
         </Button>
       </DialogTrigger>
@@ -78,6 +75,20 @@ const AddRevisionEntry = ({
 
               {format(noteData.entryDate, "PPP")}
             </Button>
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="date" className="text-right">
+              Time
+            </Label>
+
+            <Input
+              type="time"
+              id="time"
+              value={noteData.time}
+              onChange={(e) => handleSetNoteData(e)}
+              className="w-fit"
+              required
+            />
           </div>
         </div>
         <DialogFooter className="flex flex-row space-x-4 place-content-evenly">
