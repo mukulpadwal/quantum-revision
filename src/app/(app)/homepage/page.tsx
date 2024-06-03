@@ -16,6 +16,7 @@ import { app } from "@/helpers/firebase";
 import Image from "next/image";
 import ReminderDrawer from "@/components/ReminderDrawer";
 import Reminder from "@/types/Reminder";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function HomePage() {
   const { data: session } = useSession();
@@ -26,6 +27,7 @@ export default function HomePage() {
     time: "",
   });
   const [revisionData, setRevisionData] = useState<RevisionData[]>([]);
+  const [isFetchingData, setIsFetchingData] = useState<boolean>(false);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
   const [isDeletingId, setIsDeletingId] = useState<string>("");
   const [isSavingNote, setIsSavingNote] = useState(false);
@@ -37,6 +39,7 @@ export default function HomePage() {
   const [reminderData, setReminderData] = useState<Reminder[]>([]);
 
   const fetchNoteData = async () => {
+    setIsFetchingData(true);
     try {
       const response = await axios.get("/api/notes/all");
 
@@ -48,6 +51,8 @@ export default function HomePage() {
       }
     } catch (error: any) {
       console.error(`Error while fetching notes : ERROR : ${error}`);
+    } finally {
+      setIsFetchingData(false);
     }
   };
 
@@ -272,12 +277,24 @@ export default function HomePage() {
     <div className="relative w-full min-h-screen flex flex-col justify-normal items-center gap-y-4">
       <div className="w-full flex flex-col md:flex-row justify-center md:justify-between items-center gap-y-4 md:gap-y-0 p-2 sm:my-4">
         <h1 className="text-center sm:text-left text-3xl flex flex-row items-center justify-center space-x-2">
-          <div>
-            Welcome <strong>{session?.user.username} </strong>
+          <div className="flex flex-row justify-center items-center gap-x-2">
+            <span>Welcome</span>
+            <span>
+              {session?.user.username ? (
+                <strong>{session?.user.username}</strong>
+              ) : (
+                <Skeleton className="w-[60px] h-[30px] rounded-full" />
+              )}
+            </span>
           </div>
-          <div title="Verified Badge">
-            {session?.user.isVerified && (
+          <div
+            title="Verified Badge"
+            className="flex items-center justify-center"
+          >
+            {session?.user.isVerified ? (
               <BadgeCheck className="text-green-500" />
+            ) : (
+              <Skeleton className="w-[30px] h-[30px] rounded-full" />
             )}
           </div>
         </h1>
@@ -311,6 +328,7 @@ export default function HomePage() {
           isDeletingId={isDeletingId}
           isEnablingNotification={isEnablingNotification}
           isEnablingNotificationId={isEnablingNotificationId}
+          isFetchingData={isFetchingData}
         />
       </div>
     </div>
