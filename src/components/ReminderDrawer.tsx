@@ -30,8 +30,8 @@ const ReminderDrawer = ({ reminderData }: ReminderDrawerType) => {
       </DrawerTrigger>
       <DrawerContent>
         <div className="mx-auto w-full max-w-sm">
-          <DrawerHeader>
-            <DrawerTitle>Daily Reminder</DrawerTitle>
+          <DrawerHeader className="w-full flex flex-col justify-center items-center">
+            <DrawerTitle className="text-2xl font-bold">Daily Reminder</DrawerTitle>
             <DrawerDescription>
               Boost Your Knowledge, One Step at a Time.
             </DrawerDescription>
@@ -39,9 +39,9 @@ const ReminderDrawer = ({ reminderData }: ReminderDrawerType) => {
           <div className="p-4 pb-0">
             <ul className="grid grid-cols-2 list-inside gap-y-4">
               {reminderData.length === 0
-                ? "No topics to revise today..."
+                ? <span className="col-span-12 w-full text-center text-xl mb-6">No topics to revise today...</span>
                 : reminderData.map((data) => (
-                    <li className="list-disc" key={data._id}>{data.title}</li>
+                    <li className="list-disc text-lg" key={data._id}>{data.title}</li>
                   ))}
             </ul>
           </div>

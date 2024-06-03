@@ -56,7 +56,8 @@ export default function HomePage() {
     try {
       if (
         noteData.title.trim().length > 0 &&
-        noteData.entryDate !== undefined
+        noteData.entryDate !== undefined &&
+        noteData.time !== ""
       ) {
         const response = await axios.post("/api/notes/create", noteData);
 
@@ -79,6 +80,7 @@ export default function HomePage() {
       console.log(`Some error occured while creating entry.`);
     } finally {
       setIsSavingNote(false);
+      fetchReminderData();
     }
   };
 
@@ -100,6 +102,7 @@ export default function HomePage() {
     } finally {
       setIsDeletingId("");
       setIsDeleting(false);
+      fetchReminderData();
     }
   };
 
