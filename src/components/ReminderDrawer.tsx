@@ -37,7 +37,7 @@ const ReminderDrawer = ({ reminderData }: ReminderDrawerType) => {
             </DrawerDescription>
           </DrawerHeader>
           <div className="p-4 pb-0">
-            <ul className="grid grid-cols-2 list-inside gap-y-4">
+            <ul className="grid grid-cols-1 list-inside gap-y-4">
               {reminderData.length === 0
                 ? <span className="col-span-12 w-full text-center text-xl mb-6">No topics to revise today...</span>
                 : reminderData.map((data) => (
